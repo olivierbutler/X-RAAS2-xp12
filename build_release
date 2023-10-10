@@ -1,0 +1,283 @@
+#!/bin/bash
+
+# CDDL HEADER START
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+# CDDL HEADER END
+
+# Copyright 2016 Saso Kiselkov. All rights reserved.
+
+######################################
+#
+# MASTER X-RAAS BUILD SCRIPT
+#
+# This is the master X-RAAS build script. Run this to fire off a release
+# build on your platform. We currently support the following build platforms:
+#
+#	*) Ubuntu 16.04 LTS (or later): this builds the Linux and Windows
+#	   64-bit flavors. Refer to qmake/build-win-lin for details of
+#	   the required build packages.
+#	*) Mac OS 10.9.5 (or later): this builds the Mac OS 64-bit
+#	   flavor. Refer to qmake/build-mac for details.
+#
+# Please note that X-RAAS2 no longer performs 32-bit builds by default.
+# The qmake specifications contain the necessary stanzas, but they are no
+# longer built by default and tested and are subject to removal at some
+# later point in time.
+#
+# In each case, you'll want to have your basic build environment working
+# (i.e. build packages installed on Linux, Xcode on Mac).
+#
+# The build process proceeds in three steps:
+#
+#	1) Build all included dependencies for all target platforms. ATM this
+#	   is just FreeType. We build a static, stand-alone, symbol-hidden
+#	   version of the library. We don't want to export any of its symbols
+#	   outside the plugin.
+#	2) Build the plugin itself for all target platforms using qmake.
+#	3) Assemble the final 'X-RAAS2' plugin package. The output package
+#	   will be located in this top-level directory in a form that is
+#	   ready for zipping for distribution and installation into X-Plane.
+#
+######################################
+
+DIST_FILES=(
+    'COPYING'				'Documentation'
+    'api/COPYING'			'Documentation/api'
+    'api/python/XRAAS_ND_msg_decode.py'	'Documentation/api/python'
+    'api/python/test_sample.py'		'Documentation/api/python'
+    'api/lua/test_sample.lua'		'Documentation/api/lua'
+    'api/lua/XRAAS_ND_msg_decode.lua'	'Documentation/api/lua'
+    'api/c/XRAAS_ND_msg_decode.h'	'Documentation/api/c'
+    'api/c/XRAAS_ND_msg_decode.c'	'Documentation/api/c'
+    'api/c/test_sample.c'		'Documentation/api/c'
+    'Documentation/AvionicsIntegrationGuide/AvionicsIntegrationGuide.pdf' \
+	'Documentation'
+    'Documentation/UserManual/UserManual.pdf'	'Documentation'
+    'data/fonts/Aileron/Aileron-Regular.otf'			''
+    'data/fonts/ShareTechMono/OFL.txt'				''
+    'data/fonts/ShareTechMono/ShareTechMono-Regular.ttf'	''
+    'data/ND_overlays.cfg'		''
+    'data/msgs/female/0.wav'		'//WAV2OPUS//'
+    'data/msgs/female/1.wav'		'//WAV2OPUS//'
+    'data/msgs/female/2.wav'		'//WAV2OPUS//'
+    'data/msgs/female/3.wav'		'//WAV2OPUS//'
+    'data/msgs/female/30.wav'		'//WAV2OPUS//'
+    'data/msgs/female/4.wav'		'//WAV2OPUS//'
+    'data/msgs/female/5.wav'		'//WAV2OPUS//'
+    'data/msgs/female/6.wav'		'//WAV2OPUS//'
+    'data/msgs/female/7.wav'		'//WAV2OPUS//'
+    'data/msgs/female/8.wav'		'//WAV2OPUS//'
+    'data/msgs/female/9.wav'		'//WAV2OPUS//'
+    'data/msgs/female/alt_set.wav'	'//WAV2OPUS//'
+    'data/msgs/female/apch.wav'		'//WAV2OPUS//'
+    'data/msgs/female/avail.wav'	'//WAV2OPUS//'
+    'data/msgs/female/caution.wav'	'//WAV2OPUS//'
+    'data/msgs/female/center.wav'	'//WAV2OPUS//'
+    'data/msgs/female/deep_land.wav'	'//WAV2OPUS//'
+    'data/msgs/female/feet.wav'		'//WAV2OPUS//'
+    'data/msgs/female/flaps.wav'	'//WAV2OPUS//'
+    'data/msgs/female/hundred.wav'	'//WAV2OPUS//'
+    'data/msgs/female/left.wav'		'//WAV2OPUS//'
+    'data/msgs/female/long_land.wav'	'//WAV2OPUS//'
+    'data/msgs/female/meters.wav'	'//WAV2OPUS//'
+    'data/msgs/female/on_rwy.wav'	'//WAV2OPUS//'
+    'data/msgs/female/on_twy.wav'	'//WAV2OPUS//'
+    'data/msgs/female/pause.wav'	'//WAV2OPUS//'
+    'data/msgs/female/right.wav'	'//WAV2OPUS//'
+    'data/msgs/female/rmng.wav'		'//WAV2OPUS//'
+    'data/msgs/female/rwys.wav'		'//WAV2OPUS//'
+    'data/msgs/female/short_rwy.wav'	'//WAV2OPUS//'
+    'data/msgs/female/thousand.wav'	'//WAV2OPUS//'
+    'data/msgs/female/too_fast.wav'	'//WAV2OPUS//'
+    'data/msgs/female/too_high.wav'	'//WAV2OPUS//'
+    'data/msgs/female/twy.wav'		'//WAV2OPUS//'
+    'data/msgs/female/unstable.wav'	'//WAV2OPUS//'
+    'data/msgs/male/0.wav'		'//WAV2OPUS//'
+    'data/msgs/male/1.wav'		'//WAV2OPUS//'
+    'data/msgs/male/2.wav'		'//WAV2OPUS//'
+    'data/msgs/male/3.wav'		'//WAV2OPUS//'
+    'data/msgs/male/30.wav'		'//WAV2OPUS//'
+    'data/msgs/male/4.wav'		'//WAV2OPUS//'
+    'data/msgs/male/5.wav'		'//WAV2OPUS//'
+    'data/msgs/male/6.wav'		'//WAV2OPUS//'
+    'data/msgs/male/7.wav'		'//WAV2OPUS//'
+    'data/msgs/male/8.wav'		'//WAV2OPUS//'
+    'data/msgs/male/9.wav'		'//WAV2OPUS//'
+    'data/msgs/male/alt_set.wav'	'//WAV2OPUS//'
+    'data/msgs/male/apch.wav'		'//WAV2OPUS//'
+    'data/msgs/male/avail.wav'		'//WAV2OPUS//'
+    'data/msgs/male/caution.wav'	'//WAV2OPUS//'
+    'data/msgs/male/center.wav'		'//WAV2OPUS//'
+    'data/msgs/male/deep_land.wav'	'//WAV2OPUS//'
+    'data/msgs/male/feet.wav'		'//WAV2OPUS//'
+    'data/msgs/male/flaps.wav'		'//WAV2OPUS//'
+    'data/msgs/male/hundred.wav'	'//WAV2OPUS//'
+    'data/msgs/male/left.wav'		'//WAV2OPUS//'
+    'data/msgs/male/long_land.wav'	'//WAV2OPUS//'
+    'data/msgs/male/meters.wav'		'//WAV2OPUS//'
+    'data/msgs/male/on_rwy.wav'		'//WAV2OPUS//'
+    'data/msgs/male/on_twy.wav'		'//WAV2OPUS//'
+    'data/msgs/male/pause.wav'		'//WAV2OPUS//'
+    'data/msgs/male/right.wav'		'//WAV2OPUS//'
+    'data/msgs/male/rmng.wav'		'//WAV2OPUS//'
+    'data/msgs/male/rwys.wav'		'//WAV2OPUS//'
+    'data/msgs/male/short_rwy.wav'	'//WAV2OPUS//'
+    'data/msgs/male/thousand.wav'	'//WAV2OPUS//'
+    'data/msgs/male/too_fast.wav'	'//WAV2OPUS//'
+    'data/msgs/male/too_high.wav'	'//WAV2OPUS//'
+    'data/msgs/male/twy.wav'		'//WAV2OPUS//'
+    'data/msgs/male/unstable.wav'	'//WAV2OPUS//'
+    'config/X-RAAS.cfg'			'Documentation/sample-config'
+)
+
+function install_xtra_file() {
+	FILE="$1"
+	DSTDIR="$2"
+	if [[ "$DSTDIR" = "//PNG2DDS//" ]]; then
+		DSTDIR=""
+		XFERCMD="convert"
+		TGTFILE="$(basename "$FILE")"
+		TGTFILE="${TGTFILE/%.png/.dds}"
+	elif [[ "$DSTDIR" = "//WAV2OPUS//" ]]; then
+		DSTDIR=""
+		# We need to fix the logical stream serial number, otherwise
+		# opusenc randomly generates a new one each time and that
+		# makes our output non-deterministic. This messes with our
+		# product distribution platform, since it will be downloading
+		# the new Opus sound files even though nothing has changed.
+		# So to make the serial number pseudo-random, we fix it to
+		# first 32 bits of the MD5 hash of the source WAV file.
+		MD5=$(md5sum "$FILE")
+		XFERCMD="opusenc --bitrate 64 --framesize 60 --serial \
+		    $(printf '%d' "0x${MD5:0:8}")"
+		TGTFILE="$(basename "$FILE")"
+		TGTFILE="${TGTFILE/%.wav/.opus}"
+	elif [[ "$DSTDIR" = "//WAV2MP3//" ]]; then
+		DSTDIR=""
+		XFERCMD="lame -b 64 -h"
+		TGTFILE="$(basename "$FILE")"
+		TGTFILE="${TGTFILE/%.wav/.mp3}"
+	else
+		TGTFILE="$(basename "$FILE")"
+		XFERCMD="cp"
+	fi
+	if [[ "$DSTDIR" = "" ]]; then
+		DSTDIR="$(dirname "$FILE")"
+	fi
+	# When making an aircraft-type-specific build, don't include the
+	# API & integration docs, as those are not necessary (we've already
+	# done the integration ourselves).
+	if [ "$acf_type" -ne 0 ] && ( [[ "$FILE" = api/* ]] || \
+	    [[ "$FILE" = *AvionicsIntegrationGuide.pdf* ]] ); then
+		return
+	fi
+	mkdir -p "X-RAAS2${embed_suffix}/$DSTDIR"
+	$XFERCMD "$FILE" "X-RAAS2${embed_suffix}/$DSTDIR/$TGTFILE"
+}
+
+function install_xtra_files() {
+        for (( I=0; $I < ${#DIST_FILES[@]}; I=$I + 2 )); do
+                install_xtra_file "${DIST_FILES[$I]}" "${DIST_FILES[$I + 1]}"
+        done
+}
+
+embed=''
+embed_suffix=''
+nodoc=no
+acf_type=0
+
+while getopts "edht:" opt; do
+	case "$opt" in
+	e)
+		if [ -z "$embed" ]; then
+			embed="-e"
+			embed_suffix="_embed"
+		fi
+		;;
+	d)
+		nodoc=yes
+		;;
+	t)
+		case "$OPTARG" in
+			FF_A320)
+				acf_type=1
+				embed_suffix=""
+				;;
+			*)
+				echo "Invalid aircraft type." \
+				    "Try \"$0 -h\" for help" >&2
+				exit 1
+				;;
+		esac
+		embed="-e"
+		;;
+	h)
+		cat << EOF
+Usage: $0 [-eh] [-t <acf_type>]
+Options:
+  -d : Continue even if the documentation build failed. Useful if you don't
+       have pdfTeX installed and just want to test build.
+  -e : Build an embeddable version of X-RAAS. Embeddable versions auto-inhibit
+       when a globally installed version of X-RAAS is detected to prevent
+       duplicated annunciations. Embeddable versions also relocate their config
+       files and data cache so that they don't interfere with a global version.
+  -t <acf_type>: Build an embeddable version specifically geared towards a
+       particular aircraft model. This implies "-e". Currently supported
+       aircraft models are:
+       *) FF_A320 : The FlightFactor Airbus A320-200. The resulting plugin
+                    will be named simply "X-RAAS2".
+  -h : Show this help screen.
+EOF
+		exit
+		;;
+	*)
+		echo "Try \"$0 -h\" for help." >&2
+		exit 1
+		;;
+	esac
+done
+
+if [[ "$#" -ge $OPTIND ]]; then
+	echo "Too many arguments. Try \"$0 -h\" for help" >&2
+	exit 1
+fi
+
+if [[ "$nodoc" == "no" ]] && ! ( cd Documentation && make ) ; then
+	cat << EOF >&2
+Documentation build failed, please make sure you have pdfTeX installed.
+To skip building documentation, use the -d flag.
+EOF
+	exit 1
+fi
+
+rm -rf X-RAAS2${embed_suffix}
+
+case `uname` in
+Linux)
+	set -e
+	( cd qmake && ./build-win-lin $embed -t "$acf_type" )
+	mkdir -p X-RAAS2${embed_suffix}/64
+	cp qmake/output/64/{win,lin}.xpl X-RAAS2${embed_suffix}/64
+	install_xtra_files
+	set +e
+	;;
+Darwin)
+	( cd qmake && ./build-mac $embed -t "$acf_type" ) && \
+	    mkdir -p X-RAAS2${embed_suffix}/64 && \
+	    cp qmake/output/64/mac.xpl X-RAAS2${embed_suffix}/64 && \
+	    install_xtra_files
+	;;
+*)
+	echo "Unsupported platform" >&2
+	exit 1
+	;;
+esac
