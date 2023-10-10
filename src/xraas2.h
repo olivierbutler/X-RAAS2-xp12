@@ -40,12 +40,12 @@ typedef enum TATL_state_e {
 	TATL_STATE_FL
 } TATL_state_t;
 
-typedef struct {
+/*typedef struct {
 	bool_t		enabled;
 	const char	*name;
 	const char	*conf_key;
 } monitor_t;
-
+*/
 enum {
 	APCH_RWY_ON_GND_MON = 0,
 	APCH_RWY_IN_AIR_MON,

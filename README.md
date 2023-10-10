@@ -1,6 +1,3 @@
-# X-RAAS2-xp12
-Updated version adding Xp12 full compatiblity
-
 # X-RAAS
 This is a simulation of the Honeywell Runway Awareness and Advisory System
 (RAAS) for the X-Plane 11+ simulator by Laminar Research. To get the latest
@@ -11,6 +8,10 @@ release, see:
 The installation zip package includes a full user manual with
 installation instructions in Documentation/User Manual.pdf. Refer to
 COPYING for the license.
+
+### Version history
+v2.3 Updated version adding Xp12 full compatiblity, Apple silicon compatibilty
+
 
 ### BUILDING
 
@@ -35,6 +36,11 @@ $ ./build_release -e
 
 See Documentation/Avionics Integration Guide.pdf for more information on
 how to properly interface with an embedded version of X-RAAS.
+
+
+### CREDIT
+
+Original version by skiselkov: https://github.com/skiselkov/X-RAAS2
 
 ### DISCLAIMER
 

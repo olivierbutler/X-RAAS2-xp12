@@ -55,6 +55,7 @@ mkdir -p output/64
 make distclean > /dev/null
 qmake -set XRAAS_EMBED $embed && \
     qmake -set ACF_TYPE "$acf_type" && \
+    qmake -set NOERRORS 1 && \
     qmake -spec macx-clang && \
     make -j $NCPUS && \
     mv libmac.xpl.dylib output/64/mac.xpl

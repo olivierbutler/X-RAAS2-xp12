@@ -17,12 +17,17 @@
 TEMPLATE = lib
 QT -= gui core
 
+QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
+
 CONFIG += warn_on plugin debug
 CONFIG -= thread exceptions qt rtti
 
 VERSION = 1.0.0
 
-INCLUDEPATH += $$[LIBACFUTILS]/FreeType/freetype-2.7/include
+debug = $$[DEBUG]
+dll = $$[ACFUTILS_DLL]
+noerrors = $$[NOERRORS]
+
 INCLUDEPATH += $$[LIBACFUTILS]/SDK/CHeaders/XPLM
 INCLUDEPATH += $$[LIBACFUTILS]/SDK/CHeaders/Widgets
 INCLUDEPATH += $$[LIBACFUTILS]/SDK
@@ -35,8 +40,19 @@ INCLUDEPATH += $$[LIBACFUTILS]/src
 # Aircraft-type-specific APIs
 INCLUDEPATH += ../acf_apis
 
-QMAKE_CFLAGS += -std=c99 -g -W -Wall -Wextra -Werror -fvisibility=hidden
+
+
+QMAKE_CFLAGS += -std=c11 -g -W -Wall -Wextra  -fvisibility=hidden
+contains(noerrors, 0) {
+	QMAKE_CFLAGS += -Werror
+}
 QMAKE_CFLAGS += -Wunused-result
+
+!macx {
+	QMAKE_CFLAGS += -Wno-format-truncation -Wno-cast-function-type
+	QMAKE_CFLAGS += -Wno-stringop-overflow -Wno-missing-field-initializers
+}
+
 
 # _GNU_SOURCE needed on Linux for getline()
 # DEBUG - used by our ASSERT macro
@@ -45,7 +61,7 @@ QMAKE_CFLAGS += -Wunused-result
 DEFINES += _GNU_SOURCE DEBUG _FILE_OFFSET_BITS=64 _USE_MATH_DEFINES
 
 # Latest X-Plane APIs. No legacy support needed.
-DEFINES += XPLM200 XPLM210
+DEFINES += XPLM200 XPLM210 XPLM300 XPLM301
 DEFINES += \
     XRAAS2_BUILD_VERSION=\'\"$$system("git describe --abbrev=0 --tags")\"\'
 
@@ -57,95 +73,54 @@ contains(XRAAS_EMBED, yes) {
 	DEFINES += XRAAS_IS_EMBEDDED
 }
 
-# Just a generally good idea not to depend on shipped libgcc.
-!macx {
-	LIBS += -static-libgcc
-}
 
 win32 {
-	CONFIG += dll
 	DEFINES += APL=0 IBM=1 LIN=0 _WIN32_WINNT=0x0600
 	TARGET = win.xpl
 	INCLUDEPATH += /usr/include/GL
 	QMAKE_DEL_FILE = rm -f
-}
+	LIBS += -static-libgcc
 
-win32:contains(CROSS_COMPILE, x86_64-w64-mingw32-) {
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 \
-	    --static-openal --cflags")
+	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal --cflags")
+	LIBS += -L$$[LIBACFUTILS]/qmake/win64 -lacfutils
+	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal  --libs")
 
-	# This must go first so GCC finds the deps in the latter libraries
-	LIBS += -L $$[LIBACFUTILS]/qmake/win64 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 \
-	    --static-openal --libs")
+	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPLM_64
+	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPWidgets_64
+	LIBS += -L/usr/x86_64-w64-mingw32 -lglu32 -lopengl32
 	LIBS += -ldbghelp
-	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPLM_64 -lXPWidgets_64
-	LIBS += -L$$[LIBACFUTILS]/OpenAL/libs/Win64 -lOpenAL32
-	LIBS += -L$$[LIBACFUTILS]/GL_for_Windows/lib -lopengl32
-}
-
-win32:contains(CROSS_COMPILE, i686-w64-mingw32-) {
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-32 \
-	    --cflags")
-	LIBS += -L $$[LIBACFUTILS]/qmake/win32 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-32 --libs")
-	LIBS += -ldbghelp
-	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPLM -lXPWidgets
-	LIBS += -L$$[LIBACFUTILS]/OpenAL/libs/Win32 -lOpenAL32
-	LIBS += -L$$[LIBACFUTILS]/GL_for_Windows/lib -lopengl32
-}
-
-unix:!macx {
-	DEFINES += APL=0 IBM=0 LIN=1
-	TARGET = lin.xpl
-	LIBS += -nodefaultlibs
 }
 
 linux-g++-64 {
+	DEFINES += APL=0 IBM=0 LIN=1
+	TARGET = lin.xpl
+	QMAKE_CFLAGS += -fno-stack-protector
 	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 \
-	    --cflags")
-	LIBS += -L../FreeType/freetype-linux-64/lib -lfreetype
+	    --static-openal --cflags")
 	LIBS += -L $$[LIBACFUTILS]/qmake/lin64 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 --libs")
+	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64  --static-openal --libs")
 }
 
-linux-g++-32 {
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-32 \
-	    --cflags")
-	# The stack protector forces us to depend on libc,
-	# but we'd prefer to be static.
-	QMAKE_CFLAGS += -fno-stack-protector
-	LIBS += -fno-stack-protector
-	LIBS += -L../FreeType/freetype-linux-32/lib -lfreetype
-	LIBS += -L $$[LIBACFUTILS]/qmake/lin32 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-32 --libs")
-	LIBS += -lssp_nonshared
-}
+
 
 macx {
-	DEFINES += APL=1 IBM=0 LIN=0
+	DEFINES += APL=1 IBM=0 LIN=0 TARGET_OS_MAC=1
+	DEFINES += LACF_GLEW_USE_NATIVE_TLS=0
 	TARGET = mac.xpl
 	INCLUDEPATH += ../OpenAL/include
 	LIBS += -F$$[LIBACFUTILS]/SDK/Libraries/Mac
 	LIBS += -framework XPLM -framework XPWidgets
 	LIBS += -framework OpenGL -framework OpenAL
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 }
 
 macx-clang {
+    DEFINES += TARGET_OS_MAC=1
 	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 \
-	    --cflags")
-	LIBS += -L../FreeType/freetype-mac-64/lib -lfreetype
-	LIBS += -L $$[LIBACFUTILS]/qmake/mac64 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --libs")
+	   --static-openal --cflags")
+	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --libs")
 }
 
-macx-clang-32 {
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-32 \
-	    --cflags")
-	LIBS += -L../FreeType/freetype-mac-32/lib -lfreetype
-	LIBS += -L$$[LIBACFUTILS]/qmake/mac32 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-32 --libs")
-}
 
 HEADERS += ../src/*.h ../api/c/XRAAS_ND_msg_decode.h
 SOURCES += ../src/*.c ../api/c/XRAAS_ND_msg_decode.c

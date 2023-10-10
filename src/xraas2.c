@@ -2405,7 +2405,7 @@ startup_complete(void)
 {
 #ifndef	XRAAS_IS_EMBEDDED
 	log_init_msg(state.config.startup_notify, STARTUP_MSG_TIMEOUT, NULL,
-	    NULL, "X-RAAS(%s): Runway Awareness OK; %s.", XRAAS2_VERSION,
+	    NULL, "X-RAAS (%s): Runway Awareness OK; %s.", XRAAS2_VERSION,
 	    state.config.use_imperial ? "Feet" : "Meters");
 #endif	/* !XRAAS_IS_EMBEDDED */
 }

@@ -684,7 +684,7 @@ ff_a320_update(double step, void *tag)
 
 	ff_adc.baro_alt = MET2FEET(ff_a320_getf32(ff_a320.ids.baro_alt));
 	alt_uncorr = MET2FEET(ff_a320_getf32(ff_a320.ids.baro_raw));
-	if (!is_valid_alt(ff_adc.baro_alt)) {
+	if (!is_valid_alt_ft(ff_adc.baro_alt)) {
 		/*
 		 * The FF A320 signals that the altimeter setting is STD by
 		 * passing an invalid value for the baro altitude (-10000m).

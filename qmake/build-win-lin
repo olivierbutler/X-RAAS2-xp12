@@ -56,6 +56,7 @@ mkdir -p output/64
 qmake -set CROSS_COMPILE x86_64-w64-mingw32- && \
     qmake -set XRAAS_EMBED $embed && \
     qmake -set ACF_TYPE "$acf_type" && \
+	qmake -set NOERRORS 1 && \
     qmake -spec win32-g++ && \
     make -j $NCPUS && \
     mv debug/win.xpl1.dll output/64/win.xpl
@@ -67,6 +68,7 @@ make distclean > /dev/null
 mkdir -p output/64
 qmake -set XRAAS_EMBED $embed && \
     qmake -set ACF_TYPE "$acf_type" && \
+	qmake -set NOERRORS 1 && \
     qmake -spec linux-g++-64 && \
     make -j $NCPUS && \
     mv liblin.xpl.so output/64/lin.xpl

@@ -71,7 +71,7 @@
 # define	NEWLINE "\n"
 #endif		/* !IBM */
 
-#define	COPYRIGHT1	XRAAS_MENU_NAME XRAAS2_VERSION \
+#define	COPYRIGHT1	XRAAS_MENU_NAME " " XRAAS2_VERSION \
 	"       Copyright 2017 Saso Kiselkov. All rights reserved."
 #define	COPYRIGHT2	"X-RAAS is open-source software. See COPYING for " \
 			"more information."
@@ -585,9 +585,9 @@ layout_text_field(XPWidgetID window, tooltip_set_t *tts, int x, int y,
 	if (max_chars != 0)
 		XPSetWidgetProperty(widget, xpProperty_MaxCharacters,
 		    max_chars);
-	if (tooltip != NULL)
-		tooltip_new(tts, x, y, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT,
-		    tooltip);
+//	if (tooltip != NULL)
+//		tooltip_new(tts, x, y, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT,
+//		    tooltip);
 
 	return (widget);
 }
@@ -629,9 +629,9 @@ layout_scroll_control(XPWidgetID window, tooltip_set_t *tts,
 	scb->formatter = formatter;
 	list_insert_tail(cbs_list, scb);
 
-	if (tooltip != NULL)
-		tooltip_new(tts, x, y, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT,
-		    tooltip);
+//	if (tooltip != NULL)
+//		tooltip_new(tts, x, y, TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT,
+//		    tooltip);
 
 	return (widget);
 }
@@ -687,7 +687,7 @@ create_main_window(void)
 		(void) create_widget_rel(x + 20, y, B_FALSE, \
 		    BUTTON_WIDTH - 20, BUTTON_HEIGHT - 5, 1, text, 0, \
 		    main_win, xpWidgetClass_Caption); \
-		tooltip_new(tts, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, tooltip); \
+		/*tooltip_new(tts, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, tooltip);*/ \
 		y += BUTTON_HEIGHT; \
 	} while (0)
 
@@ -849,7 +849,7 @@ create_main_window(void)
 	do { \
 		buttons.var = create_widget_rel(x, y, B_FALSE, w, h, 1, \
 		    label, 0, main_win, xpWidgetClass_Button); \
-		tooltip_new(tts, x, y, w, h, tooltip); \
+		/*tooltip_new(tts, x, y, w, h, tooltip);*/ \
 	} while (0)
 
 	LAYOUT_PUSH_BUTTON(save_liv_conf, WINDOW_MARGIN, MAIN_WINDOW_HEIGHT -
@@ -897,7 +897,7 @@ create_main_window(void)
 	create_widget_rel(2 * WINDOW_MARGIN + BUTTON_WIDTH,
 	    MAIN_WINDOW_HEIGHT - 49, B_FALSE,
 	    MAIN_WINDOW_WIDTH - 2 * BUTTON_WIDTH - 4 * WINDOW_MARGIN,
-	    TEXT_FIELD_HEIGHT, 1, TOOLTIP_HINT, 0, main_win,
+	    TEXT_FIELD_HEIGHT, 1, "" /*TOOLTIP_HINT*/, 0, main_win,
 	    xpWidgetClass_Caption);
 
 	text_fields.status_msg = create_widget_rel(2 * WINDOW_MARGIN +
