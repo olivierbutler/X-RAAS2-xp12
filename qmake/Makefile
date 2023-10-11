@@ -14,7 +14,7 @@ EQ            = =
 
 CC            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CXX           = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
-DEFINES       = -D_GNU_SOURCE -DDEBUG -D_FILE_OFFSET_BITS=64 -D_USE_MATH_DEFINES -DXPLM200 -DXPLM210 -DXPLM300 -DXPLM301 -DXRAAS2_BUILD_VERSION='""' -DACF_TYPE=0 -DAPL=1 -DIBM=0 -DLIN=0 -DTARGET_OS_MAC=1 -DLACF_GLEW_USE_NATIVE_TLS=0 -DTARGET_OS_MAC=1
+DEFINES       = -D_GNU_SOURCE -DDEBUG -D_FILE_OFFSET_BITS=64 -D_USE_MATH_DEFINES -DXPLM200 -DXPLM210 -DXPLM300 -DXPLM301 -DXRAAS2_BUILD_VERSION='"v2.3"' -DACF_TYPE=0 -DAPL=1 -DIBM=0 -DLIN=0 -DTARGET_OS_MAC=1 -DLACF_GLEW_USE_NATIVE_TLS=0 -DTARGET_OS_MAC=1
 CFLAGS        = -pipe -std=c11 -g -W -Wall -Wextra -fvisibility=hidden -Wunused-result -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/src -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/libiconv/libiconv-mac-64/include -DAL_LIBTYPE_STATIC -DGLEW_MX -DCURL_STATICLIB -DPCRE2_STATIC -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/opus/opusfile-mac-64/include/opus -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/opus/opus-mac-64/include/opus -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/opus/libogg-mac-64/install/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/freetype/freetype-mac-64/include/freetype2 -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/libpng/libpng-mac-64/include/libpng16 -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/zlib/zlib-mac-64//include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/cairo/cairo-mac-64/include/cairo -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/cairo/pixman-mac-64/include/pixman-1 -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/curl/libcurl-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/shapelib/libproj-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/shapelib/libshape-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/ssl/openssl-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/libxml2/libxml2-mac-64/include/libxml2 -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/openal-soft/openal-soft-1.21.0-mac-64/build/install/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/openal-soft/openal-soft-1.21.0-mac-64/build/install/include/AL -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/pcre2/pcre2-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/geographiclib/geographiclib-mac-64/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/glew/glew-1.13.0-mac-64/install/include -I/Users/olivierbutler/Projects/xplane/lib/libacfutils/cglm/cglm-0.7.9/include -DPCRE2_CODE_UNIT_WIDTH=8 -DLACF_GLEW_USE_NATIVE_TLS=0 -g $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -mmacosx-version-min=10.13 -Wall -Wextra -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -stdlib=libc++ -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk -mmacosx-version-min=10.13 -Wall -Wextra -fPIC $(DEFINES)
 INCPATH       = -I. -I../../lib/libacfutils/SDK/CHeaders/XPLM -I../../lib/libacfutils/SDK/CHeaders/Widgets -I../../lib/libacfutils/SDK -I../../lib/libacfutils/OpenAL/include -I../../lib/libacfutils/src -I../acf_apis -I../OpenAL/include -I/opt/homebrew/share/qt/mkspecs/macx-clang
@@ -1061,7 +1061,6 @@ airdata.o: ../src/airdata.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMPlugin.h
 		../../lib/libacfutils/src/acfutils/airportdb.h \
 		../../lib/libacfutils/src/acfutils/avl.h \
 		../../lib/libacfutils/src/acfutils/avl_impl.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../src/rwy_key_tbl.h \
 		../api/c/XRAAS_ND_msg_decode.h
@@ -1094,7 +1093,6 @@ dbg_gui.o: ../src/dbg_gui.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMDisplay.
 		../../lib/libacfutils/src/acfutils/avl_impl.h \
 		../../lib/libacfutils/src/acfutils/list.h \
 		../../lib/libacfutils/src/acfutils/list_impl.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h \
@@ -1184,7 +1182,6 @@ init_msg.o: ../src/init_msg.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMDispla
 		../../lib/libacfutils/src/acfutils/safe_alloc.h \
 		../../lib/libacfutils/src/acfutils/parser_funcs.h \
 		../../lib/libacfutils/src/acfutils/math_core.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h \
@@ -1224,7 +1221,6 @@ nd_alert.o: ../src/nd_alert.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMDataAc
 		../../lib/libacfutils/src/acfutils/avl_impl.h \
 		../../lib/libacfutils/src/acfutils/list.h \
 		../../lib/libacfutils/src/acfutils/list_impl.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h
@@ -1250,7 +1246,6 @@ rwy_key_tbl.o: ../src/rwy_key_tbl.c ../../lib/libacfutils/src/acfutils/airportdb
 		../../lib/libacfutils/src/acfutils/parser_funcs.h \
 		../../lib/libacfutils/src/acfutils/math_core.h \
 		../../lib/libacfutils/src/acfutils/time.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/dbg_log.h \
@@ -1284,7 +1279,6 @@ snd_sys.o: ../src/snd_sys.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMProcessi
 		../../lib/libacfutils/src/acfutils/airportdb.h \
 		../../lib/libacfutils/src/acfutils/avl.h \
 		../../lib/libacfutils/src/acfutils/avl_impl.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h
@@ -1337,6 +1331,9 @@ xraas2.o: ../src/xraas2.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMDataAccess
 		../../lib/libacfutils/src/acfutils/perf.h \
 		../../lib/libacfutils/src/acfutils/wav.h \
 		../../lib/libacfutils/OpenAL/include/al.h \
+		../../lib/libacfutils/src/acfutils/crc64.h \
+		../../lib/libacfutils/src/acfutils/glew.h \
+		../../lib/libacfutils/src/acfutils/tls.h \
 		../src/airdata.h \
 		../src/dbg_gui.h \
 		../src/dbg_log.h \
@@ -1345,7 +1342,6 @@ xraas2.o: ../src/xraas2.c ../../lib/libacfutils/SDK/CHeaders/XPLM/XPLMDataAccess
 		../src/nd_alert.h \
 		../src/xraas2.h \
 		../../lib/libacfutils/src/acfutils/airportdb.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h \
@@ -1379,7 +1375,6 @@ xraas_cfg.o: ../src/xraas_cfg.c ../../lib/libacfutils/src/acfutils/helpers.h \
 		../../lib/libacfutils/src/acfutils/avl_impl.h \
 		../../lib/libacfutils/src/acfutils/list.h \
 		../../lib/libacfutils/src/acfutils/list_impl.h \
-		../../lib/libacfutils/src/acfutils/crc64.h \
 		../../lib/libacfutils/src/acfutils/htbl.h \
 		../../lib/libacfutils/src/acfutils/thread.h \
 		../src/rwy_key_tbl.h \

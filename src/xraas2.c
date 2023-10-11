@@ -42,6 +42,8 @@
 #include <acfutils/time.h>
 #include <acfutils/types.h>
 #include <acfutils/wav.h>
+#include <acfutils/crc64.h>
+#include <acfutils/glew.h>
 
 #include "airdata.h"
 #include "dbg_gui.h"
@@ -2608,6 +2610,20 @@ XPluginStart(char *outName, char *outSig, char *outDesc)
 {
 	char *p;
 
+	GLenum err;
+
+	crc64_init();
+	crc64_srand(microclock());
+
+	err = glewInit();
+	if (err != GLEW_OK) {
+		/* Problem: glewInit failed, something is seriously wrong. */
+		logMsg("FATAL ERROR: cannot initialize libGLEW: %s",
+		    glewGetErrorString(err));
+		return (0);
+	}
+
+
 	log_init(XPLMDebugString, XRAAS2_PLUGIN_NAME);
 
 	/* Always use Unix-native paths on the Mac! */
@@ -2766,3 +2782,14 @@ XPluginReceiveMessage(XPLMPluginID src, int msg, void *param)
 		break;
 	}
 }
+
+#if	IBM
+BOOL WINAPI
+DllMain(HINSTANCE hinst, DWORD reason, LPVOID resvd)
+{
+	UNUSED(hinst);
+	UNUSED(resvd);
+	lacf_glew_dllmain_hook(reason);
+	return (TRUE);
+}
+#endif	/* IBM */

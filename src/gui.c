@@ -469,6 +469,7 @@ menu_cb(void *menu, void *item)
 		}
 		free(cachedir);
 		/*FALLTHROUGH*/
+		__attribute__ ((fallthrough));
 	}
 	case RAAS_RESET_CMD:
 		xraas_fini();
