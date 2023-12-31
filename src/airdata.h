@@ -49,7 +49,7 @@ extern "C" {
 typedef struct {
 	double	baro_alt;	/* feet */
 	double	baro_set;	/* in.Hg */
-	double	baro_sl;	/* in.Hg */
+	double	baro_sl;	/* in.Hg in Xp11, Pascal in Xp12*/
 	double	rad_alt;	/* feet */
 
 	double	lat;		/* degrees */

@@ -194,6 +194,10 @@ extern const char *xraas_acf_dirpath;
 extern const char *xraas_acf_livpath;
 extern const char *xraas_plugindir;
 
+extern int xraas_xp_ver, xraas_xplm_ver;
+extern XPLMHostApplicationID xraas_host_id;
+
+
 void xraas_init(void);
 void xraas_fini(void);
 bool_t xraas_is_on(void);

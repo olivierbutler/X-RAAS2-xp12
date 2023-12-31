@@ -309,6 +309,10 @@ const char *xraas_acf_dirpath = acf_dirpath;
 const char *xraas_acf_livpath = acf_livpath;
 const char *xraas_plugindir = plugindir;
 
+int xraas_xp_ver, xraas_xplm_ver;
+XPLMHostApplicationID xraas_host_id;
+
+
 static dr_t sim_time_dr;
 
 static const char *FJS737[] = { "B732", NULL };
@@ -2106,13 +2110,13 @@ altimeter_setting(void)
 	int elev = MET2FEET(adc->elev), baro_alt = adc->baro_alt;
 	int64_t now;
 	bool_t field_changed = B_FALSE;
+	double baro_sl = (xraas_xp_ver >= 12000) ? PA2INHG(adc->baro_sl) : adc->baro_sl;
 
 	/* Don't do anything if radalt indicates we're on the ground */
 	if (adc->rad_alt < RADALT_GRD_THRESH)
 		return;
 
 	now = microclock();
-
 	/*
 	 * We use two approaches for guessing at the TA & TL:
 	 * 1) We can receive the values directly from the FMS via the ADC
@@ -2142,10 +2146,10 @@ altimeter_setting(void)
 	 *	TATL state transitions.
 	 */
 	if (TL == 0 && TA != 0) {
-		if (adc->baro_sl > STD_BARO_REF) {
+		if (baro_sl > STD_BARO_REF) {
 			TL = TA;
 		} else {
-			double qnh = adc->baro_sl * 33.85;
+			double qnh = baro_sl * 33.85;
 			TL = TA + 28 * (1013 - qnh);
 		}
 		if (field_changed)
@@ -2632,6 +2636,7 @@ XPluginStart(char *outName, char *outSig, char *outDesc)
 	XPLMGetSystemPath(xpdir);
 	XPLMGetPrefsPath(prefsdir);
 	XPLMGetPluginInfo(XPLMGetMyID(), NULL, plugindir, NULL, NULL);
+	XPLMGetVersions(&xraas_xp_ver, &xraas_xplm_ver, &xraas_host_id);
 
 #if	IBM
 	/*

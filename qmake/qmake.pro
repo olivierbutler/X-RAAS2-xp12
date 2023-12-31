@@ -111,6 +111,8 @@ macx {
 	LIBS += -F$$[LIBACFUTILS]/SDK/Libraries/Mac
 	LIBS += -framework XPLM -framework XPWidgets
 	LIBS += -framework OpenGL -framework OpenAL
+	###LIBS += -framework OpenGL -framework AudioToolbox
+	LIBS += -framework CoreAudio -framework AudioUnit
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 }
 

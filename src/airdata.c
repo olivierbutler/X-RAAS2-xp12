@@ -187,7 +187,11 @@ adc_init(void)
 	drs_l.pitch = dr_get("sim/flightmodel/position/true_theta");
 	drs_l.baro_set = dr_get("sim/cockpit/misc/barometer_setting");
 
-	drs_l.baro_sl = dr_get("sim/weather/barometer_sealevel_inhg");
+	if ( xraas_xp_ver < 12000) {
+		drs_l.baro_sl = dr_get("sim/weather/barometer_sealevel_inhg");
+	} else {
+		drs_l.baro_sl = dr_get("sim/weather/region/sealevel_pressure_pas");
+	}
 
 	drs_l.nw_offset = dr_get("sim/flightmodel/parts/tire_z_no_deflection");
 	drs_l.flaprqst = dr_get("sim/flightmodel/controls/flaprqst");
