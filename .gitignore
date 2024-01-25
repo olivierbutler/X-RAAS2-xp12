@@ -3,3 +3,5 @@ X-RAAS2/
 qmake/output/64/mac.xpl
 qmake/Makefile
 build_release_ob
+do_zip.sh
+X-RAAS2_v2.4.zip

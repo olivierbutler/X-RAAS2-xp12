@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 #define	MAN_REF(sect) \
-	"(Refer to section " sect " of the X-RAAS user manual for more " \
+	"(Refer to the X-RAAS user manual for more " \
 	"information.)"
 
 static const char *enabled_tooltip =
