@@ -132,6 +132,7 @@
 #define	TILE_NAME_FMT			"%+03.0f%+04.0f"
 
 #define	XRAAS_CACHE_DIR			"X-RAAS.cache"
+#define MAX_PATH_LENGHT			1024
 
 typedef struct {
 	double min, max;
@@ -302,12 +303,16 @@ static char acf_dirpath[512] = { 0 };
 static XPLMDataRef acf_livpath_dr = NULL;
 static char acf_livpath[1024] = { 0 };
 static char acf_filename[512] = { 0 };
+static char cfg_acf_fullpath[MAX_PATH_LENGHT] = { 0 };
+static char cfg_liv_fullpath[MAX_PATH_LENGHT] = { 0 };
 
 const char *xraas_xpdir = xpdir;
 const char *xraas_prefsdir = prefsdir;
 const char *xraas_acf_dirpath = acf_dirpath;
 const char *xraas_acf_livpath = acf_livpath;
 const char *xraas_plugindir = plugindir;
+const char *xraas_cfg_acf_fullpath = cfg_acf_fullpath;
+const char *xraas_cfg_liv_fullpath = cfg_liv_fullpath;
 
 int xraas_xp_ver, xraas_xplm_ver;
 XPLMHostApplicationID xraas_host_id;
@@ -2423,6 +2428,7 @@ xraas_init(void)
 	char *sep;
 	char livpath[1024];
 	char *cachedir;
+	char *tmpbuf;
 
 	ASSERT(!xraas_inited);
 
@@ -2456,6 +2462,74 @@ xraas_init(void)
 #endif
 	snprintf(acf_livpath, sizeof (acf_livpath), "%s%c%s", xpdir,
 	    DIRSEP, livpath);
+
+
+memset(cfg_acf_fullpath, 0, sizeof (cfg_acf_fullpath));
+memset(cfg_liv_fullpath, 0, sizeof (cfg_liv_fullpath));
+
+tmpbuf = calloc(strlen(acf_dirpath) + 2, sizeof(tmpbuf));
+
+if (tmpbuf != NULL) {
+	// copy the acf filename and remove the extension
+	sep = strrchr(acf_dirpath, DIRSEP);
+	if (sep == NULL) {
+		/* aircraft's dirpath is unknown */
+		logMsg("WARNING: can't determine your aircraft's directory "
+		    "path based on its .acf file path (%s). Some functions "
+		    "of X-RAAS will be limited (e.g. aircraft-specific "
+		    "configuration loading).", acf_dirpath);
+		goto no_acf_found;
+	}
+	strcpy(tmpbuf, sep+1);
+	// changing any space or slash to underscore
+	for (unsigned long i=0 ; i<strlen(tmpbuf); i++) {
+		if ((tmpbuf[i] == ' ') || (tmpbuf[i] == '/')) {
+			tmpbuf[i] = '_';
+		}
+	}
+
+    if (snprintf(NULL, 0, "X-RAAS_%s.cfg", tmpbuf) < MAX_PATH_LENGHT) {
+		snprintf(cfg_acf_fullpath, sizeof (cfg_acf_fullpath), "X-RAAS_%s.cfg", tmpbuf);
+		char *acf_pref_path = mkpathname(xraas_prefsdir, cfg_acf_fullpath, NULL) ;
+		if ( strlen(acf_pref_path) < MAX_PATH_LENGHT ) {
+			strcpy(cfg_acf_fullpath, acf_pref_path);
+		}
+		free(acf_pref_path);
+
+
+		if (livpath[0] != '\0') {
+			char *liv_name;
+			liv_name = strstr(livpath, "liveries/");
+			if (liv_name) {
+				liv_name = liv_name + strlen("liveries/");
+			}
+			  
+
+			if ( liv_name &&( snprintf(NULL, 0, "X-RAAS_%s_%s.cfg", tmpbuf,liv_name) < MAX_PATH_LENGHT )) {
+				snprintf(cfg_liv_fullpath, sizeof (cfg_acf_fullpath), "X-RAAS_%s_%s.cfg", tmpbuf,liv_name);
+				// changing any space or slash to underscore
+				for (unsigned long i=0 ; i<strlen(cfg_liv_fullpath); i++) {
+					if ((cfg_liv_fullpath[i] == ' ') || (cfg_liv_fullpath[i] == '/')) {
+						cfg_liv_fullpath[i] = '_';
+					}
+				}
+				// livpath may have a slash at the end,
+				// cfg_liv_fullpath may finish lkke FILENAME_.cfg
+				// let's change it to FILENAME_.cfg
+				strcpy(strstr(cfg_liv_fullpath, "_.cfg") , ".cfg");
+				char *acf_pref_path = mkpathname(xraas_prefsdir, cfg_liv_fullpath, NULL) ;
+				if ( strlen(acf_pref_path) < MAX_PATH_LENGHT ) {
+					strcpy(cfg_liv_fullpath, acf_pref_path);
+
+				}	
+				free(acf_pref_path);
+			}
+		}
+	}
+	free(tmpbuf);
+}
+
+no_acf_found:
 
 	if (!load_configs(&state))
 		return;

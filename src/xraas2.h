@@ -193,6 +193,8 @@ extern const char *xraas_prefsdir;
 extern const char *xraas_acf_dirpath;
 extern const char *xraas_acf_livpath;
 extern const char *xraas_plugindir;
+extern const char *xraas_cfg_acf_fullpath;
+extern const char *xraas_cfg_liv_fullpath;
 
 extern int xraas_xp_ver, xraas_xplm_ver;
 extern XPLMHostApplicationID xraas_host_id;

@@ -29,6 +29,8 @@
 
 #include "xraas_cfg.h"
 
+static bool_t load_config_by_file(xraas_state_t *state, const char *cfgname);
+
 const char *const monitor_conf_keys[NUM_MONITORS] = {
 	"apch_rwy_on_gnd_mon",		/* APCH_RWY_ON_GND_MON */
 	"apch_rwy_in_air_mon",		/* APCH_RWY_IN_AIR_MON */
@@ -258,6 +260,15 @@ static bool_t
 load_config(xraas_state_t *state, const char *dirname)
 {
 	char *cfgname = mkpathname(dirname, "X-RAAS.cfg", NULL);
+	bool_t result = load_config_by_file( state, cfgname);
+
+	free(cfgname);
+	return (result);
+}
+
+static bool_t
+load_config_by_file(xraas_state_t *state, const char *cfgname)
+{
 	FILE *cfg_f = fopen(cfgname, "r");
 
 	if (cfg_f != NULL) {
@@ -279,7 +290,6 @@ load_config(xraas_state_t *state, const char *dirname)
 		conf_free(conf);
 		fclose(cfg_f);
 	}
-	free(cfgname);
 	return (B_TRUE);
 }
 
@@ -295,9 +305,9 @@ load_configs(xraas_state_t *state)
 	if (!load_config(state, xraas_prefsdir))
 		return (B_FALSE);
 #endif	/* !XRAAS_IS_EMBEDDED */
-	if (!load_config(state, xraas_acf_dirpath))
+	if (!load_config_by_file(state, xraas_cfg_acf_fullpath))
 		return (B_FALSE);
-	if (!load_config(state, xraas_acf_livpath))
+	if (!load_config_by_file(state, xraas_cfg_liv_fullpath))
 		return (B_FALSE);
 	return (B_TRUE);
 }

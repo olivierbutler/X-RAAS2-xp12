@@ -394,11 +394,20 @@ ND_integ_init(void)
 	dbg_log(nd_alert, 3, "attempting ND_overlays.cfg match, %s/%s/%s/%s",
 	    my_icao, my_acf, my_studio, my_author);
 
-	filename = mkpathname(xraas_plugindir, "data", "ND_overlays.cfg", NULL);
+	filename = mkpathname(xraas_prefsdir,  "ND_overlays.cfg", NULL);
 	fp = fopen(filename, "r");
 	free(filename);
-	if (fp == NULL)
-		return;
+	if (fp == NULL) {
+		filename = mkpathname(xraas_plugindir, "data", "ND_overlays.cfg", NULL); 
+		fp = fopen(filename, "r");
+		free(filename);
+		if (fp == NULL) {
+			return;
+		}
+		logMsg("founded : X-RAAS2/data/ND_overlays.cfg");	
+	} else {
+	logMsg("founded : Output/preferences/ND_overlays.cfg");
+	}
 
 #define	FILTER_PARAM(param) \
 	do { \

@@ -72,7 +72,7 @@
 #endif		/* !IBM */
 
 #define	COPYRIGHT1	XRAAS_MENU_NAME " " XRAAS2_VERSION \
-	"       Copyright 2017 Saso Kiselkov. All rights reserved."
+	"       © 2017-2014 S.Kiselkov, Obutler. All rights reserved."
 #define	COPYRIGHT2	"X-RAAS is open-source software. See COPYING for " \
 			"more information."
 #define	TOOLTIP_HINT	"Hint: hover your mouse cursor over any knob to " \
@@ -342,6 +342,7 @@ gen_config(void)
 	return (conf_text);
 }
 
+/*
 static char *
 config_target2filename(conf_target_t target)
 {
@@ -357,14 +358,37 @@ config_target2filename(conf_target_t target)
 		VERIFY(0);
 	}
 }
+*/
+static char *
+config_target2filename(conf_target_t target)
+{
+	switch (target) {
+	case CONFIG_TARGET_LIVERY:
+		return (mkpathname(xraas_cfg_liv_fullpath,  NULL));
+	case CONFIG_TARGET_AIRCRAFT:
+		return (mkpathname(xraas_cfg_acf_fullpath,  NULL));
+	case CONFIG_TARGET_GLOBAL:
+		return (mkpathname(xraas_prefsdir, "X-RAAS.cfg", NULL));
+	default:
+		VERIFY(0);
+	}
+}
 
 static void
 save_config(conf_target_t target)
 {
 	char *config;
 	char *filename = config_target2filename(target);
-	FILE *fp = fopen(filename, "w");
 
+	if (!strlen(filename)) {
+		logMsg("Saving the configuration for the default livery is not supported ");
+		XPSetWidgetDescriptor(text_fields.status_msg,
+		    "Saving the configuration for the default livery is not supported");
+		free(filename);
+		return;
+	}
+
+	FILE *fp = fopen(filename, "w");
 	if (fp == NULL) {
 		logMsg("Error writing configuration file %s: %s", filename,
 		    strerror(errno));
@@ -444,6 +468,7 @@ menu_cb(void *menu, void *item)
 	switch (cmd) {
 	case CONFIG_GUI_CMD:
 		XPShowWidget(main_win);
+		XPSetWidgetDescriptor(text_fields.status_msg,"");
 		break;
 	case DBG_GUI_TOGGLE_CMD:
 		ASSERT(xraas_inited);
@@ -652,6 +677,8 @@ create_main_window(void)
 	    offsetof(scrollbar_cb_t, node));
 
 	tts = tooltip_set_new(main_win);
+	tooltip_set_font_size(tts, 14);
+
 
 	(void) create_widget_rel(LAYOUT_START_X + WINDOW_MARGIN,
 	    LAYOUT_START_Y - 15, B_FALSE, COLUMN_X, 12, 1, "Global settings",
@@ -1005,8 +1032,10 @@ command_cb(XPLMCommandRef cmd, XPLMCommandPhase phase, void *refcon)
 	UNUSED(cmd);
 	if (phase == xplm_CommandBegin) {
 		if (cmd == toggle_cfg_gui_cmd) {
-			if (!XPIsWidgetVisible(main_win))
+			if (!XPIsWidgetVisible(main_win)) {
 				XPShowWidget(main_win);
+				XPSetWidgetDescriptor(text_fields.status_msg,"");
+			}
 			else
 				XPHideWidget(main_win);
 		} else
