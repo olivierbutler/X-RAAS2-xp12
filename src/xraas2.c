@@ -2703,7 +2703,8 @@ XPluginStart(char *outName, char *outSig, char *outDesc)
 
 
 	log_init(XPLMDebugString, XRAAS2_PLUGIN_NAME);
-
+	XPLMEnableFeature("XPLM_USE_NATIVE_WIDGET_WINDOWS", 1);
+	
 	/* Always use Unix-native paths on the Mac! */
 	XPLMEnableFeature("XPLM_USE_NATIVE_PATHS", 1);
 

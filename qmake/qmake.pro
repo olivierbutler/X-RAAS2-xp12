@@ -40,7 +40,10 @@ INCLUDEPATH += $$[LIBACFUTILS]/src
 # Aircraft-type-specific APIs
 INCLUDEPATH += ../acf_apis
 
-
+INCLUDEPATH += ../src/ImgWindow
+INCLUDEPATH += ../src/imgui
+INCLUDEPATH += ../src/font
+INCLUDEPATH += ../src
 
 QMAKE_CFLAGS += -std=c11 -g -W -Wall -Wextra  -fvisibility=hidden
 contains(noerrors, 0) {
@@ -75,54 +78,56 @@ contains(XRAAS_EMBED, yes) {
 
 
 win32 {
-	DEFINES += APL=0 IBM=1 LIN=0 _WIN32_WINNT=0x0600
-	TARGET = win.xpl
-	INCLUDEPATH += /usr/include/GL
-	QMAKE_DEL_FILE = rm -f
-	LIBS += -static-libgcc
+    DEFINES += APL=0 IBM=1 LIN=0 _WIN32_WINNT=0x0600
+    TARGET = win.xpl
+    INCLUDEPATH += /usr/include/GL
+    QMAKE_DEL_FILE = rm -f
+    LIBS += -static-libgcc -static-libstdc++  # Link C++ standard library statically
 
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal --cflags")
-	LIBS += -L$$[LIBACFUTILS]/qmake/win64 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal  --libs")
+    QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal --cflags")
+    QMAKE_CXXFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal --cflags")
+    LIBS += -L$$[LIBACFUTILS]/qmake/win64 -lacfutils
+    LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps win-64 --static-openal --libs")
 
-	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPLM_64
-	LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPWidgets_64
-	LIBS += -L/usr/x86_64-w64-mingw32 -lglu32 -lopengl32
-	LIBS += -ldbghelp
+    LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPLM_64
+    LIBS += -L$$[LIBACFUTILS]/SDK/Libraries/Win -lXPWidgets_64
+    LIBS += -L/usr/x86_64-w64-mingw32 -lglu32 -lopengl32
+    LIBS += -ldbghelp
 }
 
 linux-g++-64 {
-	DEFINES += APL=0 IBM=0 LIN=1
-	TARGET = lin.xpl
-	QMAKE_CFLAGS += -fno-stack-protector
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 \
-	    --static-openal --cflags")
-	LIBS += -L $$[LIBACFUTILS]/qmake/lin64 -lacfutils
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64  --static-openal --libs")
+    DEFINES += APL=0 IBM=0 LIN=1
+    TARGET = lin.xpl
+    QMAKE_CFLAGS += -fno-stack-protector
+    QMAKE_CXXFLAGS += -fno-stack-protector
+    QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 --static-openal --cflags")
+    QMAKE_CXXFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 --static-openal --cflags")
+    LIBS += -L $$[LIBACFUTILS]/qmake/lin64 -lacfutils
+    LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps linux-64 --static-openal --libs")
+    LIBS += -lstdc++  # Link C++ standard library
 }
 
-
-
 macx {
-	DEFINES += APL=1 IBM=0 LIN=0 TARGET_OS_MAC=1
-	DEFINES += LACF_GLEW_USE_NATIVE_TLS=0
-	TARGET = mac.xpl
-	INCLUDEPATH += ../OpenAL/include
-	LIBS += -F$$[LIBACFUTILS]/SDK/Libraries/Mac
-	LIBS += -framework XPLM -framework XPWidgets
-	LIBS += -framework OpenGL -framework OpenAL
-	###LIBS += -framework OpenGL -framework AudioToolbox
-	LIBS += -framework CoreAudio -framework AudioUnit
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
+    DEFINES += APL=1 IBM=0 LIN=0 TARGET_OS_MAC=1
+    DEFINES += LACF_GLEW_USE_NATIVE_TLS=0
+    TARGET = mac.xpl
+    INCLUDEPATH += ../OpenAL/include
+    LIBS += -F$$[LIBACFUTILS]/SDK/Libraries/Mac
+    LIBS += -framework XPLM -framework XPWidgets
+    LIBS += -framework OpenGL -framework OpenAL
+    LIBS += -framework CoreAudio -framework AudioUnit
+    LIBS += -lc++  # Link C++ standard library for macOS
+    QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
 }
 
 macx-clang {
     DEFINES += TARGET_OS_MAC=1
-	QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 \
-	   --static-openal --cflags")
-	LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --libs")
+    QMAKE_CFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --cflags")
+    QMAKE_CXXFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --cflags")
+    LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --libs")
 }
 
 
-HEADERS += ../src/*.h ../api/c/XRAAS_ND_msg_decode.h
+HEADERS += ../src/*.h ../api/c/XRAAS_ND_msg_decode.h ../src/ImgWindow/*.h ../src/imgui/*.h ../src/font/*.h ../src/font/*.inc
 SOURCES += ../src/*.c ../api/c/XRAAS_ND_msg_decode.c
+SOURCES += ../src/*.cpp ../src/ImgWindow/*.cpp ../src/imgui/*.cpp

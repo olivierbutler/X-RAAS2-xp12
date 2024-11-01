@@ -46,6 +46,8 @@
 #include "xraas2.h"
 #include "xraas_cfg.h"
 
+#include "xp_img_window.h"
+
 #include "gui.h"
 #include "gui_tooltips.h"
 
@@ -110,6 +112,18 @@ enum {
 	RAAS_RESET_CMD,
 	RECREATE_CACHE_CMD
 };
+
+
+#define MAIN_WINDOW_W 800
+#define MAIN_WINDOW_H 650
+
+#define ROUNDED 8.0f
+#define TOOLTIP_BG_COLOR ImVec4(0.2f, 0.3f, 0.8f, 1.0f)
+#define LINE_COLOR IM_COL32(255, 255, 255, 255)
+#define LINE_THICKNESS 1.0f
+#define BUTTON_DISABLED 0.5f
+
+void bp_conf_open(void);
 
 static int plugins_menu_item;
 static XPLMMenuID root_menu;
@@ -459,10 +473,11 @@ reset_config(conf_target_t target)
 static void
 menu_cb(void *menu, void *item)
 {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
-	int cmd = (int)item;
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic push
+//#pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
+//	int cmd = (int)item;
+	int cmd = (int)(intptr_t)item;  // WARNING: Potential data loss
+//#pragma GCC diagnostic pop
 
 	UNUSED(menu);
 	switch (cmd) {
@@ -541,9 +556,9 @@ main_window_cb(XPWidgetMessage msg, XPWidgetID widget, intptr_t param1,
 	} else if (msg == xpMsg_ScrollBarSliderPositionChanged) {
 		XPWidgetID scrollbar = (XPWidgetID)param1;
 
-		for (scrollbar_cb_t *scb = list_head(&main_win_scrollbar_cbs);
+		for (scrollbar_cb_t *scb = (scrollbar_cb_t *) list_head(&main_win_scrollbar_cbs);
 		    scb != NULL;
-		    scb = list_next(&main_win_scrollbar_cbs, scb)) {
+		    scb =  (scrollbar_cb_t *)list_next(&main_win_scrollbar_cbs, scb)) {
 			char buf[32];
 
 			if (scrollbar != scb->scrollbar)
@@ -627,7 +642,7 @@ layout_scroll_control(XPWidgetID window, tooltip_set_t *tts,
 {
 	XPWidgetID widget;
 	XPWidgetID caption;
-	scrollbar_cb_t *scb = malloc(sizeof (*scb));
+	scrollbar_cb_t *scb =  (scrollbar_cb_t *) malloc(sizeof (*scb));
 	char buf[32];
 
 	(void) create_widget_rel(x, y, B_FALSE, TEXT_FIELD_WIDTH * 0.6,
@@ -938,7 +953,7 @@ static void
 destroy_main_window(void)
 {
 	scrollbar_cb_t *scb;
-	while ((scb = list_head(&main_win_scrollbar_cbs)) != NULL) {
+	while ((scb =  (scrollbar_cb_t *)list_head(&main_win_scrollbar_cbs)) != NULL) {
 		list_remove(&main_win_scrollbar_cbs, scb);
 		free(scb);
 	}
@@ -1032,6 +1047,7 @@ command_cb(XPLMCommandRef cmd, XPLMCommandPhase phase, void *refcon)
 	UNUSED(cmd);
 	if (phase == xplm_CommandBegin) {
 		if (cmd == toggle_cfg_gui_cmd) {
+			
 			if (!XPIsWidgetVisible(main_win)) {
 				XPShowWidget(main_win);
 				XPSetWidgetDescriptor(text_fields.status_msg,"");
@@ -1087,6 +1103,7 @@ gui_init(void)
 	tooltip_init();
 	create_menu();
 	create_main_window();
+	bp_conf_open();
 	register_commands();
 	gui_inited = B_TRUE;
 }
@@ -1113,4 +1130,178 @@ gui_update(void)
 	    xraas_state->config.debug_graphical ? xplm_Menu_Checked :
 	    xplm_Menu_Unchecked);
 	update_main_window();
+}
+
+typedef struct {
+  const char *string;
+  bool use_chinese;
+  const char *value;
+} comboList_t_;
+
+typedef struct {
+  comboList_t_ *combo_list;
+  int list_size;
+  const char *name;
+  int selected;
+} comboList_t;
+
+
+class SettingsWindow : public XPImgWindow {
+public:
+  SettingsWindow(WndMode _mode = WND_MODE_FLOAT_CENTERED);
+  void CenterText(const char *text);
+  bool CenterButton(const char *text);
+  void Tooltip(const char *tip);
+  bool_t comboList(comboList_t *list);
+  bool_t save_disabled;
+
+  ~SettingsWindow() {
+  }
+
+  bool_t getIsDestroy(void) { return is_destroy; }
+
+private:
+ 
+  bool_t is_destroy;
+ 
+  void LoadConfig(void);
+  void comboList_free(comboList_t *list);
+
+protected:
+  void buildInterface() override;
+};
+
+SettingsWindow::SettingsWindow(WndMode _mode)
+    : XPImgWindow(_mode, WND_STYLE_SOLID,
+                  WndRect(0, MAIN_WINDOW_W, MAIN_WINDOW_H, 0))
+       {
+  SetWindowTitle("BetterPushback Preferences");
+  SetWindowResizingLimits(MAIN_WINDOW_W, MAIN_WINDOW_H, MAIN_WINDOW_W,
+                          MAIN_WINDOW_H);
+  LoadConfig();
+  
+}
+
+void SettingsWindow::LoadConfig(void) {
+
+ 
+}
+
+
+void SettingsWindow::comboList_free(comboList_t *list) {
+  for (size_t i = 0; i < list->list_size; i++) {
+    free((void *)list->combo_list[i].string);
+    free((void *)list->combo_list[i].value);
+  }
+  free((void *)list->combo_list);
+  list->list_size = 0;
+}
+
+bool_t SettingsWindow::comboList(comboList_t *list) {
+  bool_t is_changed = B_FALSE;
+  comboList_t_ combo_previous = list->combo_list[list->selected];
+  if (combo_previous.use_chinese) {
+    ImGui::PushFont(ImgWindow::fontChinese.get());
+  }
+
+  //  ImGui::SetNextItemWidth(360.0f); // Width in pixels
+
+  bool_t lang_combo =
+      ImGui::BeginCombo(list->name, combo_previous.string, 0);
+  if (combo_previous.use_chinese) {
+    ImGui::PopFont();
+  }
+  if (lang_combo) {
+    for (int i = 0; i < list->list_size; i++) {
+      int is_selected = (i == list->selected);
+      if (list->combo_list[i].use_chinese) {
+        ImGui::PushFont(ImgWindow::fontChinese.get());
+      }
+      if (ImGui::Selectable(list->combo_list[i].string, is_selected)) {
+        is_changed = (list->selected != i);
+        list->selected = i;
+      }
+      if (list->combo_list[i].use_chinese) {
+        ImGui::PopFont();
+      }
+      if (is_selected) {
+        ImGui::SetItemDefaultFocus();
+      }
+    }
+    ImGui::EndCombo();
+  }
+  return is_changed;
+}
+
+void SettingsWindow::CenterText(const char *text) {
+  ImVec2 windowSize = ImGui::GetWindowSize();
+  ImVec2 textSize = ImGui::CalcTextSize(text);
+
+  // Calculate horizontal position to center the text
+  float textPosX = (windowSize.x - textSize.x) * 0.5f;
+
+  // Make sure it doesn't go out of bounds
+  if (textPosX > 0.0f)
+    ImGui::SetCursorPosX(textPosX);
+
+  ImGui::Text("%s", text);
+}
+
+bool SettingsWindow::CenterButton(const char *text) {
+  ImVec2 windowSize = ImGui::GetWindowSize();
+  ImVec2 textSize = ImGui::CalcTextSize(text);
+
+  // Calculate horizontal position to center the text
+  float textPosX = (windowSize.x - textSize.x) * 0.5f;
+
+  // Make sure it doesn't go out of bounds
+  if (textPosX > 0.0f)
+    ImGui::SetCursorPosX(textPosX);
+
+  return ImGui::Button(text);
+}
+
+void SettingsWindow::Tooltip(const char *tip) {
+  // do the tooltip
+  if (tip && ImGui::IsItemHovered()) {
+    ImGui::PushStyleColor(ImGuiCol_PopupBg, TOOLTIP_BG_COLOR);
+    ImGui::BeginTooltip();
+    ImGui::PushTextWrapPos(300);
+    ImGui::TextUnformatted(tip);
+    ImGui::PopTextWrapPos();
+    ImGui::EndTooltip();
+    ImGui::PopStyleColor();
+  }
+}
+void SettingsWindow::buildInterface() {
+	ImGui::Text("%s",  "test" );
+
+ 
+}
+
+SettingsWindow *setup_window = nullptr;
+
+void destroy_setup_window(void) {
+
+  if (setup_window != nullptr) {
+    delete setup_window;
+    setup_window = nullptr;
+  }
+}
+
+void bp_conf_open() {
+
+  if (!gui_inited) {
+    XPImgWindowInit();
+    logMsg( "XPImgWindowInit");
+  setup_window = new SettingsWindow();
+return;
+
+
+    gui_inited = B_TRUE;
+  }
+
+  destroy_setup_window();
+  setup_window = new SettingsWindow();
+  setup_window->SetVisible(B_TRUE);
 }
