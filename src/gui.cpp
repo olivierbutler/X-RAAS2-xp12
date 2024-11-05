@@ -75,8 +75,8 @@
 
 #define COPYRIGHT1                                                             \
   XRAAS_MENU_NAME                                                              \
-      " " XRAAS2_VERSION                                                       \
-      "       © 2017-2014 S.Kiselkov, Obutler. All rights reserved."
+  " " XRAAS2_VERSION                                                           \
+  "       © 2017-2014 S.Kiselkov, Obutler. All rights reserved."
 #define COPYRIGHT2                                                             \
   "X-RAAS is open-source software. See COPYING for "                           \
   "more information."
@@ -550,42 +550,63 @@ void SettingsWindow::buildInterface() {
     config.var = temp / multiplier;                                            \
   } while (0)
 
-#define INPUT_INT(var, label, tool_tip, suffix, step, step_fast, min, max)                 \
+#define INPUT_INT(var, label, tool_tip, suffix, step, step_fast, min, max)     \
   ImGui::TableNextRow();                                                       \
   ImGui::TableNextColumn();                                                    \
   ImGui::Text("%s", label);                                                    \
   Tooltip(tool_tip);                                                           \
-  ImGui::TableNextColumn(); \
-  ImGui::SetNextItemWidth(combowithWidth);                                   \
-  ImGui::PushID(label); \
-  ImGui::InputInt(suffix, &config.var, step, step_fast); \
-  ImGui::PopID(); \
-  if ( config.var > max ) config.var = max; \
-  if ( config.var < min ) config.var = min ;
+  ImGui::TableNextColumn();                                                    \
+  ImGui::SetNextItemWidth(combowithWidth);                                     \
+  ImGui::PushID(label);                                                        \
+  ImGui::InputInt(suffix, &config.var, step, step_fast);                       \
+  ImGui::PopID();                                                              \
+  if (config.var > max)                                                        \
+    config.var = max;                                                          \
+  if (config.var < min)                                                        \
+    config.var = min;
 
-#define INPUT_FLOAT(var, label, tool_tip, suffix, step, step_fast, min, max, format)                 \
+#define INPUT_FLOAT(var, label, tool_tip, suffix, step, step_fast, min, max,   \
+                    format)                                                    \
   ImGui::TableNextRow();                                                       \
   ImGui::TableNextColumn();                                                    \
   ImGui::Text("%s", label);                                                    \
   Tooltip(tool_tip);                                                           \
-  ImGui::TableNextColumn(); \
-  ImGui::SetNextItemWidth(combowithWidth); \
-  ImGui::PushID(label);                            \
-  ImGui::InputFloat(suffix, &config.var, step, step_fast, format); \
-  ImGui::PopID(); \
-  if ( config.var > max ) config.var = max; \
-  if ( config.var < min ) config.var = min ;
+  ImGui::TableNextColumn();                                                    \
+  ImGui::SetNextItemWidth(combowithWidth);                                     \
+  ImGui::PushID(label);                                                        \
+  ImGui::InputFloat(suffix, &config.var, step, step_fast, format);             \
+  ImGui::PopID();                                                              \
+  if (config.var > max)                                                        \
+    config.var = max;                                                          \
+  if (config.var < min)                                                        \
+    config.var = min;
 
-#define INPUT_DOUBLE(var, label, tool_tip, suffix, step, step_fast, min, max, format)                 \
+#define INPUT_DOUBLE(var, label, tool_tip, suffix, step, step_fast, min, max,  \
+                     format)                                                   \
   ImGui::TableNextRow();                                                       \
   ImGui::TableNextColumn();                                                    \
   ImGui::Text("%s", label);                                                    \
   Tooltip(tool_tip);                                                           \
-  ImGui::TableNextColumn(); \
-  ImGui::SetNextItemWidth(combowithWidth);                                   \
-  ImGui::InputDouble(suffix, &config.var, step, step_fast, format); \
-  if ( config.var > max ) config.var = max; \
-  if ( config.var < min ) config.var = min ;
+  ImGui::TableNextColumn();                                                    \
+  ImGui::SetNextItemWidth(combowithWidth);                                     \
+  ImGui::PushID(label);                                                        \
+  ImGui::InputDouble(suffix, &config.var, step, step_fast, format);            \
+  ImGui::PopID();                                                              \
+  if (config.var > max)                                                        \
+    config.var = max;                                                          \
+  if (config.var < min)                                                        \
+    config.var = min;
+
+#define INPUT_TEXT(var, label, tool_tip)                                       \
+  ImGui::TableNextRow();                                                       \
+  ImGui::TableNextColumn();                                                    \
+  ImGui::Text("%s", label);                                                    \
+  Tooltip(tool_tip);                                                           \
+  ImGui::TableNextColumn();                                                    \
+  ImGui::SetNextItemWidth(combowithWidth);                                     \
+  ImGui::PushID(label);                                                        \
+  ImGui::InputText("", config.var, IM_ARRAYSIZE(config.var));                  \
+  ImGui::PopID();
 
   if (ImGui::BeginTable("##main_table", 2, ImGuiTableFlags_SizingStretchSame,
                         ImVec2(tableWidth, 0))) {
@@ -655,14 +676,61 @@ void SettingsWindow::buildInterface() {
                  0, 100, 100);
 
 #if ACF_TYPE == NO_ACF_TYPE
-    INPUT_INT(min_engines, "Minimum number of engines", min_engines_tooltip, "", 1 ,1, 1, 10);
-    INPUT_INT(min_mtow, "Minimum MTOW", min_mtow_tooltip, "kg", 1000 ,10000, 0, 200000);
-#endif /* ACF_TYPE == NO_ACF_TYPE */	
-    INPUT_INT(min_takeoff_dist, "Minimum takeoff distance", min_takeoff_dist_tooltip, "m", 100 ,100, 0, 10000);
-    INPUT_INT(min_landing_dist, "Minimum landing distance", min_landing_dist_tooltip, "m", 100 ,100, 0, 10000);
-    INPUT_INT(min_rotation_dist, "Minimum rotation distance", min_rotation_dist_tooltip, "m", 100 ,100, 0, 10000);
+    INPUT_INT(min_engines, "Minimum number of engines", min_engines_tooltip, "",
+              1, 1, 1, 10);
+    INPUT_INT(min_mtow, "Minimum MTOW", min_mtow_tooltip, "kg", 1000, 10000, 0,
+              200000);
+#endif /* ACF_TYPE == NO_ACF_TYPE */
+    INPUT_INT(min_takeoff_dist, "Minimum takeoff distance",
+              min_takeoff_dist_tooltip, "m", 100, 100, 0, 10000);
+    INPUT_INT(min_landing_dist, "Minimum landing distance",
+              min_landing_dist_tooltip, "m", 100, 100, 0, 10000);
+    INPUT_INT(min_rotation_dist, "Minimum rotation distance",
+              min_rotation_dist_tooltip, "m", 100, 100, 0, 10000);
 
-    INPUT_DOUBLE(min_rotation_angle, "Minimum rotation angle", min_rotation_angle_tooltip, "deg", 0.1f ,1.0f, 0, 10, "%.1f");
+    INPUT_DOUBLE(min_rotation_angle, "Minimum rotation angle",
+                 min_rotation_angle_tooltip, "deg", 0.1f, 1.0f, 0, 10, "%.1f");
+
+    INPUT_INT(stop_dist_cutoff, "Runway remaining cutoff length",
+              stop_dist_cutoff_tooltip, "m", 100, 100, 0, 10000);
+
+    INPUT_INT(on_rwy_warn_initial, "Runway extended holding (initial)",
+              on_rwy_warn_initial_tooltip, "sec", 1, 10, 0, 1000);
+    INPUT_INT(on_rwy_warn_repeat, "Runway extended holding (repeat)",
+              on_rwy_warn_repeat_tooltip, "sec", 1, 10, 0, 1000);
+    INPUT_INT(on_rwy_warn_max_n, "Runway extended holding maximum",
+              on_rwy_warn_max_n_tooltip, "", 1, 1, 0, 100);
+
+    SLIDER_FLOAT(gpa_limit_mult, "GPA limit multiplier", gpa_limit_mult_tooltip,
+                 "%.1f", 0, 10, 1);
+    SLIDER_FLOAT(gpa_limit_max, "GPA limit maximum", gpa_limit_max_tooltip,
+                 "%.1f deg", 0, 10, 1);
+
+    INPUT_INT(long_land_lim_abs, "Long landing absolute limit",
+              long_land_lim_abs_tooltip, "m", 10, 100, 0, 10000);
+
+    SLIDER_FLOAT(long_land_lim_fract, "Long landing limit fraction",
+                 long_land_lim_fract_tooltip, "%.2f", 0, 10, 1);
+
+#if ACF_TYPE == NO_ACF_TYPE
+    SLIDER_FLOAT(min_landing_flap, "Minimum landing flaps",
+                 min_landing_flap_tooltip, "%.2f", 0, 10, 1);
+    SLIDER_FLOAT(min_takeoff_flap, "Minimum takeoff flaps",
+                 min_takeoff_flap_tooltip, "%.2f", 0, 10, 1);
+    SLIDER_FLOAT(max_takeoff_flap, "Maximum takeoff flaps",
+                 max_takeoff_flap_tooltip, "%.2f", 0, 10, 1);
+#endif /* ACF_TYPE == NO_ACF_TYPE */
+
+    INPUT_INT(nd_alert_timeout, "Visual alert timeout",
+              nd_alert_timeout_tooltip, "sec", 1, 1, 0, 1000);
+    // SLIDER_FLOAT(nd_alert_filter, "Visual alert filter",
+    //               nd_alert_filter_tooltip, "%.2f", 0, 10, 1);
+
+    INPUT_TEXT(nd_alert_overlay_font, "Visual alert overlay font",
+               nd_alert_overlay_font_tooltip);
+	// TODO display default when == ND_alert_overlay_default_font		   
+	INPUT_INT(nd_alert_overlay_font_size, "Visual alert overlay font size",
+              nd_alert_overlay_font_size_tooltip, "", 1, 1, 0, 100);
 
     ImGui::EndTable();
   }
