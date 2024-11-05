@@ -221,7 +221,7 @@ public:
     /// The style this window operates in
     const WndStyle wndStyle;
     /// Return whether VR is enabled or not
-    const bool IsVREnabled() const { 
+    bool IsVREnabled() const { 
         XPLMDataRef		gVrEnabledRef= XPLMFindDataRef(mIsVREnabled);
         return  XPLMGetDatai(gVrEnabledRef);
       }

@@ -75,8 +75,7 @@ enum {
 	NUM_MONITORS
 };
 
-typedef struct xraas_state {
-	struct {
+typedef struct xraas_state_config {
 		bool_t	enabled;
 
 		int		min_engines;		/* count */
@@ -133,7 +132,10 @@ typedef struct xraas_state {
 		bool_t		openal_shared;
 		bool_t		debug_graphical;
 		bool_t		debug;
-	} config;
+	} xraas_state_config_t;
+
+typedef struct xraas_state {
+	xraas_state_config_t config;
 
 	bool_t		input_faulted;	/* when adc_collect failed */
 	double		inited_time;	/* when we started up in sim time */
