@@ -75,8 +75,17 @@ enum {
 	NUM_MONITORS
 };
 
+typedef enum
+{
+    CONFIG_TARGET_LIVERY,
+    CONFIG_TARGET_AIRCRAFT,
+    CONFIG_TARGET_GLOBAL
+} conf_target_t;
+
+
 typedef struct xraas_state_config {
 		bool_t	enabled;
+		int cfg_type;	/* type is global, acf or liv */
 
 		int		min_engines;		/* count */
 		int		min_mtow;		/* kg */

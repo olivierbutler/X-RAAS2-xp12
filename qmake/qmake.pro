@@ -19,7 +19,7 @@ QT -= gui core
 
 QMAKE_APPLE_DEVICE_ARCHS = x86_64 arm64
 
-CONFIG += warn_on plugin debug
+CONFIG += warn_on plugin debug silent
 CONFIG -= thread exceptions qt rtti
 
 VERSION = 1.0.0

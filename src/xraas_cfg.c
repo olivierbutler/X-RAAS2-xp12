@@ -29,7 +29,7 @@
 
 #include "xraas_cfg.h"
 
-static bool_t load_config_by_file(xraas_state_t *state, const char *cfgname);
+static bool_t load_config_by_file(xraas_state_t *state, const char *cfgname, conf_target_t target);
 
 const char *const monitor_conf_keys[NUM_MONITORS] = {
 	"apch_rwy_on_gnd_mon",		/* APCH_RWY_ON_GND_MON */
@@ -260,14 +260,14 @@ static bool_t
 load_config(xraas_state_t *state, const char *dirname)
 {
 	char *cfgname = mkpathname(dirname, "X-RAAS.cfg", NULL);
-	bool_t result = load_config_by_file( state, cfgname);
+	bool_t result = load_config_by_file( state, cfgname, CONFIG_TARGET_GLOBAL);
 
 	free(cfgname);
 	return (result);
 }
 
 static bool_t
-load_config_by_file(xraas_state_t *state, const char *cfgname)
+load_config_by_file(xraas_state_t *state, const char *cfgname, conf_target_t target)
 {
 	FILE *cfg_f = fopen(cfgname, "r");
 
@@ -287,6 +287,7 @@ load_config_by_file(xraas_state_t *state, const char *cfgname)
 			return (B_FALSE);
 		}
 		process_conf(state, conf);
+		state->config.cfg_type = target;	
 		conf_free(conf);
 		fclose(cfg_f);
 	}
@@ -301,13 +302,22 @@ load_configs(xraas_state_t *state)
 {
 	reset_state(state);
 	/* order is important here, first load the global one */
+	state->config.cfg_type = -1; // by default if not found
+
 #ifndef	XRAAS_IS_EMBEDDED
 	if (!load_config(state, xraas_prefsdir))
-		return (B_FALSE);
+		goto load_config_error;
 #endif	/* !XRAAS_IS_EMBEDDED */
-	if (!load_config_by_file(state, xraas_cfg_acf_fullpath))
-		return (B_FALSE);
-	if (!load_config_by_file(state, xraas_cfg_liv_fullpath))
-		return (B_FALSE);
+	if (!load_config_by_file(state, xraas_cfg_acf_fullpath, CONFIG_TARGET_AIRCRAFT))
+		goto load_config_error;
+	if (!load_config_by_file(state, xraas_cfg_liv_fullpath, CONFIG_TARGET_LIVERY))
+		goto load_config_error;
+		if (state->config.cfg_type == -1) {
+			state->config.cfg_type = CONFIG_TARGET_GLOBAL;
+		}; // by default if not found
+	
 	return (B_TRUE);
+load_config_error:
+	state->config.cfg_type = -1;
+	return(B_FALSE);
 }
