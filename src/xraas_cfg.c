@@ -306,12 +306,18 @@ load_configs(xraas_state_t *state)
 
 #ifndef	XRAAS_IS_EMBEDDED
 	if (!load_config(state, xraas_prefsdir))
-		goto load_config_error;
+		{
+			goto load_config_error;
+		}
 #endif	/* !XRAAS_IS_EMBEDDED */
 	if (!load_config_by_file(state, xraas_cfg_acf_fullpath, CONFIG_TARGET_AIRCRAFT))
-		goto load_config_error;
+		{
+			goto load_config_error;
+		}
 	if (!load_config_by_file(state, xraas_cfg_liv_fullpath, CONFIG_TARGET_LIVERY))
-		goto load_config_error;
+		{
+			goto load_config_error;
+		}
 		if (state->config.cfg_type == -1) {
 			state->config.cfg_type = CONFIG_TARGET_GLOBAL;
 		}; // by default if not found

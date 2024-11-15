@@ -19,6 +19,7 @@
  * THE SOFTWARE.
 */
 
+#include <cmath>
 #include "xp_img_window.h"
 //#include "xplane.h"
 #include <acfutils/log.h>

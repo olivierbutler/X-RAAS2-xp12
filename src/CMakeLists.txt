@@ -16,6 +16,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(plugin C)
 
+set(CMAKE_CXX_STANDARD 11)
+
 SET(SRC xraas2.c dbg_log.c rwy_key_tbl.c xraas_cfg.c snd_sys.c
     nd_alert.c dbg_gui.c ../api/c/XRAAS_ND_msg_decode.c gui.c init_msg.c
     text_rendering.c airdata.c)
