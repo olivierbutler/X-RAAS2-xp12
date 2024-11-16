@@ -106,23 +106,6 @@ const char *error_reset_cfg = "Error resetting configuration, see Log.txt for de
 
 static bool_t gui_inited = B_FALSE;
 
-enum
-{
-    LAYOUT_START_X = 10,
-    LAYOUT_START_Y = 40,
-
-    BUTTON_HEIGHT = 20,
-
-    TEXT_FIELD_WIDTH = 300,
-    TEXT_FIELD_HEIGHT = 20,
-    WINDOW_MARGIN = 10,
-
-    COLUMN_X = 330,
-    COLUMN_Y = BUTTON_HEIGHT * NUM_MONITORS + WINDOW_MARGIN,
-    BUTTON_CHIN_Y = 120,
-    MAIN_WINDOW_WIDTH = 3 * COLUMN_X + 4 * WINDOW_MARGIN,
-    MAIN_WINDOW_HEIGHT = COLUMN_Y + BUTTON_CHIN_Y
-};
 
 enum
 {
@@ -133,8 +116,8 @@ enum
 };
 
 #define MAIN_WINDOW_W 800
-#define MAIN_WINDOW_H 950
-#define TABS_HEIGHT 650
+#define MAIN_WINDOW_H 700
+#define TABS_HEIGHT 450
 #define BUTTON_WIDTH 250
 
 #define ROUNDED 8.0f
