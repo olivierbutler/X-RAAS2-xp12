@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 #define	MAN_REF(sect) \
-	"(Refer to the X-RAAS user manual for more " \
+	"(Refer to section " sect " of the X-RAAS user manual for more " \
 	"information.)"
 
 static const char *enabled_tooltip =
@@ -77,11 +77,11 @@ static const char *monitor_tooltips[NUM_MONITORS] = {
     /* APCH_RWY_IN_AIR_MON */
     "ON: the approaching runway in air monitor is enabled.\n"
     "OFF: the approaching runway in air monitor is disabled.\n"
-    MAN_REF("4.10"),
+    MAN_REF("4.11"),
     /* APCH_RWY_IN_AIR_SHORT_MON */
     "ON: the approaching short runway in air monitor is enabled.\n"
     "OFF: the approaching short runway in air monitor is disabled\n"
-    MAN_REF("4.10"),
+    MAN_REF("4.11"),
     /* ON_RWY_LINEUP_MON */
     "ON: the on-runway lineup monitor is enabled.\n"
     "OFF: the on-runway lineup monitor is disabled.\n"
@@ -89,75 +89,75 @@ static const char *monitor_tooltips[NUM_MONITORS] = {
     /* ON_RWY_LINEUP_SHORT_MON */
     "ON: the on-runway (short runway) lineup monitor is enabled.\n"
     "OFF: the on-runway (short runway) lineup monitor is disabled.\n"
-    MAN_REF("4.3"),
+    MAN_REF("4.4"),
     /* ON_RWY_FLAP_MON */
     "ON: the on-runway lineup late flap selection monitor is enabled.\n"
     "OFF: the on-runway lineup late flap selection monitor is disabled.\n"
 #if	ACF_TYPE == FF_A320_ACF_TYPE
     "NOTE: this monitor is not available on the Airbus A320.\n"
 #endif	/* ACF_TYPE == FF_A320_ACF_TYPE */
-    MAN_REF("4.1"),
+    MAN_REF("4.2"),
     /* ON_RWY_TKOFF_SHORT_MON */
     "ON: the short runway takeoff monitor is enabled.\n"
     "OFF: the short runway takeoff monitor is disabled.\n"
-    MAN_REF("4.4"),
+    MAN_REF("4.5"),
     /* ON_RWY_HOLDING_MON */
     "ON: the on-runway extended holding monitor is enabled.\n"
     "OFF: the on-runway extended holding monitor is disabled.\n"
-    MAN_REF("4.2.1"),
+    MAN_REF("4.3"),
     /* ON_TWY_TKOFF_MON */
     "ON: the taxiway takeoff monitor is enabled.\n"
     "OFF: the taxiway takeoff monitor is disabled.\n"
-    MAN_REF("4.5"),
+    MAN_REF("4.6"),
     /* DIST_RMNG_LAND_MON */
     "ON: distance remaining callouts on landing are enabled.\n"
     "OFF: distance remaining callouts on landing are disabled.\n"
-    MAN_REF("4.16"),
+    MAN_REF("4.17"),
     /* DIST_RMNG_RTO_MON */
     "ON: distance remaining callouts on rejected takeoff are enabled.\n"
     "OFF: distance remaining callouts on rejected takeoff are disabled.\n"
-    MAN_REF("4.7"),
+    MAN_REF("4.17"),
     /* TWY_LAND_MON */
     "ON: the taxiway landing monitor is enabled.\n"
     "OFF: the taxiway landing monitor is disabled.\n"
-    MAN_REF("4.14"),
+    MAN_REF("4.15"),
     /* RWY_END_MON */
     "ON: the runway ending distance remaining callout is enabled.\n"
     "OFF: the runway ending distance remaining callout is disabled.\n",
     /* APCH_TOO_HIGH_UPPER_MON */
     "ON: the 'TOO HIGH' approach monitor upper gate  is enabled.\n"
     "OFF: the 'TOO HIGH' approach monitor upper gate  is disabled.\n"
-    MAN_REF("4.12"),
+    MAN_REF("4.13"),
     /* APCH_TOO_HIGH_LOWER_MON */
     "ON: the 'TOO HIGH' approach monitor lower gate is enabled.\n"
     "OFF: the 'TOO HIGH' approach monitor lower gate is disabled.\n"
-    MAN_REF("4.12"),
+    MAN_REF("4.13"),
     /* APCH_TOO_FAST_UPPER_MON */
     "ON: the 'TOO FAST' approach monitor upper gate is enabled.\n"
     "OFF: the 'TOO FAST' approach monitor upper gate is disabled.\n"
-    MAN_REF("4.13"),
+    MAN_REF("4.14"),
     /* APCH_TOO_FAST_LOWER_MON */
     "ON: the 'TOO FAST' approach monitor lower gate is enabled.\n"
     "OFF: the 'TOO FAST' approach monitor lower gate is disabled.\n"
-    MAN_REF("4.13"),
+    MAN_REF("4.14"),
     /* APCH_FLAPS_UPPER_MON */
     "ON: the late flap selection approach monitor upper gate is enabled.\n"
     "OFF: the late flap selection approach monitor upper gate is disabled.\n"
-    MAN_REF("4.11"),
+    MAN_REF("4.12"),
     /* APCH_FLAPS_LOWER_MON */
     "ON: the late flap selection approach monitor lower gate is enabled.\n"
     "OFF: the late flap selection approach monitor lower gate is disabled.\n"
-    MAN_REF("4.11"),
+    MAN_REF("4.12"),
     /* APCH_UNSTABLE_MON */
     "ON: the unstable approach monitor is enabled. The conditions checked "
     "depend\n"
     "    on the lower gate setting of the respective approach monitor.\n"
     "OFF: the unstable approach monitor is disabled.\n"
-    MAN_REF("4.11"),
+    MAN_REF("4.13"),
     /* ALTM_QNE_MON */
     "ON: the QNE altimeter setting monitor mode is enabled.\n"
     "OFF: the QNE altimeter setting monitor mode is disabled.\n"
-    MAN_REF("4.8"),
+    MAN_REF("4.9"),
     /* ALTM_QNH_MON */
     "ON: the QNH altimeter setting monitor mode is enabled.\n"
     "OFF: the QNH altimeter setting monitor mode is disabled.\n"
@@ -169,11 +169,11 @@ static const char *monitor_tooltips[NUM_MONITORS] = {
     /* LONG_LAND_MON */
     "ON: the long landing monitor is enabled.\n"
     "OFF: the long landing monitor is disabled.\n"
-    MAN_REF("4.15"),
+    MAN_REF("4.16"),
     /* LATE ROTATION_MON */
     "ON: the late rotation on takeoff monitor is enabled.\n"
     "OFF: the late rotation on takeoff monitor is disabled.\n"
-    MAN_REF("4.6")
+    MAN_REF("4.7")
 };
 
 static const char *disable_ext_view_tooltip =
@@ -211,17 +211,17 @@ static const char *speak_units_tooltip =
 static const char *nd_alerts_enabled_tooltip =
     "ON: permit issuing visual alerts on the ND or the screen overlay.\n"
     "OFF: inhibit issuing visual alerts on the ND and the screen overlay.\n"
-    MAN_REF("3.1.2");
+    MAN_REF("3.2.2");
 static const char *nd_alert_overlay_enabled_tooltip =
     "ON: permit display of visual alerts using the fallback on-screen "
     "overlay.\n"
     "OFF: inhibit display of visual alerts using the on-screen overlay.\n"
-    MAN_REF("3.1.2");
+    MAN_REF("3.2.2");
 static const char *nd_alert_overlay_force_tooltip =
     "ON: always display visual alerts using the fallback on-screen overlay.\n"
     "OFF: only display visual alerts using the on-screen overlay if the\n"
     "    aircraft doesn't provide native display of visual alerts on the ND.\n"
-    MAN_REF("3.1.2");
+    MAN_REF("3.2.2");
 static const char *openal_shared_tooltip =
 	"ON: X-RAAS should use an OpenAL audio driver context shared with the "
 	"rest of X-Plane.\n"
@@ -289,60 +289,60 @@ static const char *min_takeoff_dist_tooltip =
     "The minimum runway length remaining that is considered to be safe\n"
     "for conducting a takeoff. If the runway length remaining is less\n"
     "than this value, caution annunciations will be issued.\n"
-    MAN_REF("4.3");
+    MAN_REF("4.4");
 static const char *min_landing_dist_tooltip =
     "The minimum runway length remaining that is considered to be safe\n"
     "for conducting a landing. If the runway length remaining is less\n"
     "than this value, caution annunciations will be issued.\n"
-    MAN_REF("4.10");
+    MAN_REF("4.11");
 static const char *min_rotation_dist_tooltip =
     "The minimum runway length remaining by which if the aircraft hasn't\n"
     "initiated rotation, X-RAAS will start issuing runway length remaining\n"
     "annunciations to warn of rapidly approaching the runway end.\n"
-    MAN_REF("4.6");
+    MAN_REF("4.7");
 static const char *min_rotation_angle_tooltip =
     "The minimum pitch angle relative to the runway slope above which\n"
     "X-RAAS considers the aircraft to have initiated rotation for takeoff.\n"
-    MAN_REF("4.6");
+    MAN_REF("4.7");
 static const char *stop_dist_cutoff_tooltip =
     "On landing, do not initiate runway length remaining annunciations\n"
     "as long as the runway length remaining is above this value.\n"
-    MAN_REF("4.16");
+    MAN_REF("4.17");
 static const char *on_rwy_warn_initial_tooltip =
     "Issue the first 'ON RUNWAY' annunciation for extended holding on the\n"
     "runway after this number of seconds have elapsed.\n"
-    MAN_REF("4.2.1");
+    MAN_REF("4.2");
 static const char *on_rwy_warn_repeat_tooltip =
     "Issue subsequent 'ON RUNWAY' annunciations for extended holding\n"
     "on the runway after this number of seconds have elapsed.\n"
-    MAN_REF("4.2.1");
+    MAN_REF("4.2");
 static const char *on_rwy_warn_max_n_tooltip =
     "Maximum number of 'ON RUNWAY' annunciations issued for extended "
     "holding on the runway.\n"
-    MAN_REF("4.2.1");
+    MAN_REF("4.2");
 static const char *gpa_limit_mult_tooltip =
     "Maximum glidepath angle multiplier for the TOO HIGH approach monitor.\n"
-    MAN_REF("4.12");
+    MAN_REF("4.13");
 static const char *gpa_limit_max_tooltip =
     "Maximum absolute glidepath angle for the TOO HIGH approach monitor.\n"
-    MAN_REF("4.12");
+    MAN_REF("4.13");
 static const char *long_land_lim_abs_tooltip =
     "Maximum distance from the approach threshold above which if the aircraft\n"
     "has not yet touched down, the landing is considered a long/deep landing.\n"
-    MAN_REF("4.15");
+    MAN_REF("4.16");
 static const char *long_land_lim_fract_tooltip =
     "Fraction of the runway length from the approach threshold above "
     "which if the aircraft\n"
     "has not yet touched down, the landing is considered a "
     "long/deep landing.\n"
-    MAN_REF("4.15");
+    MAN_REF("4.16");
 static const char *nd_alert_timeout_tooltip =
     "Number of seconds for which visual alerts are displayed on the ND.\n";
 #if	ACF_TYPE == NO_ACF_TYPE
 static const char *min_landing_flap_tooltip =
     "Minimum relative flap handle position, including and above which the\n"
     "flaps setting is considered a valid flaps setting for landing.\n"
-    MAN_REF("4.11");
+    MAN_REF("4.2");
 static const char *min_takeoff_flap_tooltip =
     "Minimum relative flap handle position, including and above which the\n"
     "flaps setting is considered a valid flaps setting for takeoff.\n"
@@ -369,7 +369,7 @@ static const char *say_deep_landing_tooltip =
     "OFF: long landing annunciations are 'LONG LANDING'.\n"
     "This setting does not control whether the long landing monitor is "
     "enabled.\n"
-    MAN_REF("4.15");
+    MAN_REF("4.16");
 #ifndef	XRAAS_IS_EMBEDDED
 static const char *auto_disable_notify_tooltip =
     "When the currently loaded aircraft doesn't meet the minimum\n"
