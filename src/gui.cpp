@@ -98,7 +98,7 @@ const char *reset_aircraft_success = "Aircraft configuration reset successful";
 const char *reset_global_success = "Global configuration reset successful";
 const char *saved_airline_success = "Airline configuration saved";
 const char *saved_aircraft_success = "Aircraft configuration saved";
-const char *saved_global_success = "Global configuration reset saved";
+const char *saved_global_success = "Global configuration saved";
 
 const char *save_airline_not_supported = "Saving the configuration for the default livery is not supported";
 const char *error_writing_cfg = "Error writing configuration, see Log.txt for details.";
