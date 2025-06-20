@@ -1,0 +1,39 @@
+FROM --platform=linux/amd64 debian:bullseye
+#FROM --platform=linux/amd64 debian:bookworm
+# Set noninteractive mode for apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN rm -rf /usr/share/man/* \
+ && echo 'path-exclude /usr/share/man/*' > /etc/dpkg/dpkg.cfg.d/exclude_manpages
+ 
+# Install base system and cross-compilation dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    zip \
+    gettext \
+    git \
+    libgl1-mesa-dev \
+    qt5-qmake \
+    qtbase5-dev \
+    mingw-w64 \
+    gcc-mingw-w64 \
+    g++-mingw-w64 \
+    libz-mingw-w64-dev \
+    pkg-config \
+    libasound2-dev \
+    portaudio19-dev \
+    libpulse-dev \
+    libsoundio-dev \
+    libx11-dev \
+    libxcursor-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Make sure we use the POSIX variant by default
+#RUN update-alternatives \
+#    --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix && \
+#    update-alternatives \
+#    --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+
+WORKDIR /xpl_dev
+

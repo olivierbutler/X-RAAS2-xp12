@@ -64,7 +64,7 @@ QMAKE_CFLAGS += -Wunused-result
 DEFINES += _GNU_SOURCE DEBUG _FILE_OFFSET_BITS=64 _USE_MATH_DEFINES
 
 # Latest X-Plane APIs. No legacy support needed.
-DEFINES += XPLM200 XPLM210 XPLM300 XPLM301
+DEFINES += XPLM200 XPLM210 XPLM300 XPLM301 XPLM303
 DEFINES += \
     XRAAS2_BUILD_VERSION=\'\"$$system("git describe --abbrev=0 --tags")\"\'
 
@@ -115,9 +115,9 @@ macx {
     LIBS += -F$$[LIBACFUTILS]/SDK/Libraries/Mac
     LIBS += -framework XPLM -framework XPWidgets
     LIBS += -framework OpenGL -framework OpenAL
-    LIBS += -framework CoreAudio -framework AudioUnit
+    LIBS += -framework CoreAudio -framework AudioUnit -framework CoreFoundation
     LIBS += -lc++  # Link C++ standard library for macOS
-    QMAKE_MACOSX_DEPLOYMENT_TARGET=10.13
+    QMAKE_MACOSX_DEPLOYMENT_TARGET=11.0
 }
 
 macx-clang {
@@ -126,7 +126,6 @@ macx-clang {
     QMAKE_CXXFLAGS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --cflags")
     LIBS += $$system("$$[LIBACFUTILS]/pkg-config-deps mac-64 --static-openal --libs")
 }
-
 
 HEADERS += ../src/*.h ../api/c/XRAAS_ND_msg_decode.h ../src/ImgWindow/*.h ../src/imgui/*.h ../src/font/*.h ../src/font/*.inc
 SOURCES += ../src/*.c ../api/c/XRAAS_ND_msg_decode.c

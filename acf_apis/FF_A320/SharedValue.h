@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#define bool bool_t
+//#define bool bool_t
 
 #if	!IBM
 #undef __stdcall

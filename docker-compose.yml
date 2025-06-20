@@ -1,0 +1,11 @@
+#version: '3.8'
+
+services:
+  win-lin-build:
+    image: cross-m-w-l:latest
+    container_name: cross-m-w-l
+    build:
+      context: .
+      dockerfile: Dockerfile.win-lin
+    volumes:
+      - ..:/xpl_dev

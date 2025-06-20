@@ -190,67 +190,12 @@ function install_xtra_files() {
         done
 }
 
-embed=''
-embed_suffix=''
-nodoc=no
-acf_type=0
 
-while getopts "edht:" opt; do
-	case "$opt" in
-	e)
-		if [ -z "$embed" ]; then
-			embed="-e"
-			embed_suffix="_embed"
-		fi
-		;;
-	d)
-		nodoc=yes
-		;;
-	t)
-		case "$OPTARG" in
-			FF_A320)
-				acf_type=1
-				embed_suffix=""
-				;;
-			*)
-				echo "Invalid aircraft type." \
-				    "Try \"$0 -h\" for help" >&2
-				exit 1
-				;;
-		esac
-		embed="-e"
-		;;
-	h)
-		cat << EOF
-Usage: $0 [-eh] [-t <acf_type>]
-Options:
-  -d : Continue even if the documentation build failed. Useful if you don't
-       have pdfTeX installed and just want to test build.
-  -e : Build an embeddable version of X-RAAS. Embeddable versions auto-inhibit
-       when a globally installed version of X-RAAS is detected to prevent
-       duplicated annunciations. Embeddable versions also relocate their config
-       files and data cache so that they don't interfere with a global version.
-  -t <acf_type>: Build an embeddable version specifically geared towards a
-       particular aircraft model. This implies "-e". Currently supported
-       aircraft models are:
-       *) FF_A320 : The FlightFactor Airbus A320-200. The resulting plugin
-                    will be named simply "X-RAAS2".
-  -h : Show this help screen.
-EOF
-		exit
-		;;
-	*)
-		echo "Try \"$0 -h\" for help." >&2
-		exit 1
-		;;
-	esac
-done
+rm -rf X-RAAS2
+rm -rf X-RAAS2_*
 
-if [[ "$#" -ge $OPTIND ]]; then
-	echo "Too many arguments. Try \"$0 -h\" for help" >&2
-	exit 1
-fi
-
+source ./build_xpl.sh  
+mkdir -p X-RAAS2${embed_suffix}/64
 if [[ "$nodoc" == "no" ]] && ! ( cd Documentation && make ) ; then
 	cat << EOF >&2
 Documentation build failed, please make sure you have pdfTeX installed.
@@ -259,25 +204,6 @@ EOF
 	exit 1
 fi
 
-rm -rf X-RAAS2${embed_suffix}
-
-case `uname` in
-Linux)
-	set -e
-	( cd qmake && ./build-win-lin $embed -t "$acf_type" )
-	mkdir -p X-RAAS2${embed_suffix}/64
-	cp qmake/output/64/{win,lin}.xpl X-RAAS2${embed_suffix}/64
-	install_xtra_files
-	set +e
-	;;
-Darwin)
-	( cd qmake && ./build-mac $embed -t "$acf_type" ) && \
-	    mkdir -p X-RAAS2${embed_suffix}/64 && \
-	    cp qmake/output/64/mac.xpl X-RAAS2${embed_suffix}/64 && \
-	    install_xtra_files
-	;;
-*)
-	echo "Unsupported platform" >&2
-	exit 1
-	;;
-esac
+install_xtra_files
+cp -p 64/{win,lin}.xpl X-RAAS2${embed_suffix}/64
+cp -p 64/mac.xpl X-RAAS2${embed_suffix}/64

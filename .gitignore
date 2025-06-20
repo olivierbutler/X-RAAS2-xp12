@@ -1,8 +1,6 @@
-qmake/output/
-X-RAAS2/
-qmake/output/64/mac.xpl
-qmake/Makefile
+X-RAAS2*/
 build_release_ob
-do_zip.sh
 X-RAAS2_v*.zip
-qmake/external/
+64/
+output/
+build_xpl_ob.sh

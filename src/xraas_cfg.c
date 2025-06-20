@@ -256,6 +256,7 @@ process_conf(xraas_state_t *state, conf_t *conf)
  * this function shows an init message and returns false, otherwise it returns
  * true.
  */
+#ifndef	XRAAS_IS_EMBEDDED 
 static bool_t
 load_config(xraas_state_t *state, const char *dirname)
 {
@@ -265,6 +266,7 @@ load_config(xraas_state_t *state, const char *dirname)
 	free(cfgname);
 	return (result);
 }
+#endif
 
 static bool_t
 load_config_by_file(xraas_state_t *state, const char *cfgname, conf_target_t target)
