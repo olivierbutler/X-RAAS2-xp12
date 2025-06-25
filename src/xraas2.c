@@ -59,6 +59,7 @@
 #define	XRAAS2_STANDALONE_PLUGIN_SIG	"skiselkov.xraas2"
 
 #ifdef	XRAAS_IS_EMBEDDED
+#define	XRAAS2_PLUGIN_NAME_SHORT		"X-RAAS2 (embed)"
 #if	ACF_TYPE == FF_A320_ACF_TYPE
 #define	XRAAS2_PLUGIN_NAME		"X-RAAS " XRAAS2_VERSION \
 					" (FlightFactor Airbus A320)"
@@ -76,6 +77,7 @@
 #define	XRAAS2_DR_PREFIX		"xraas_embed"
 #endif	/* ACF_TYPE == NO_ACF_TYPE */
 #else	/* !XRAAS_IS_EMBEDDED */
+#define	XRAAS2_PLUGIN_NAME_SHORT		"X-RAAS2"
 #define	XRAAS2_PLUGIN_NAME		"X-RAAS " XRAAS2_VERSION
 #define	XRAAS2_PLUGIN_DESC		"A simulation of the Runway " \
 					"Awareness and Advisory System"
@@ -2702,7 +2704,10 @@ XPluginStart(char *outName, char *outSig, char *outDesc)
 	}
 
 
-	log_init(XPLMDebugString, XRAAS2_PLUGIN_NAME);
+	log_init(XPLMDebugString, XRAAS2_PLUGIN_NAME_SHORT);
+    logMsg( "This " XRAAS2_PLUGIN_NAME " - libacfutils-%s - for X-Plane 11/12",
+           libacfutils_version);
+
 	XPLMEnableFeature("XPLM_USE_NATIVE_WIDGET_WINDOWS", 1);
 	
 	/* Always use Unix-native paths on the Mac! */
@@ -2819,6 +2824,7 @@ XPluginStop(void)
 {
 	overrides_fini();
 	init_msg_sys_fini();
+	logMsg("Unloading X-RAAS2");
 }
 
 PLUGIN_API int
