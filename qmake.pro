@@ -70,6 +70,7 @@ DEFINES += \
 
 # Aircraft-specific defines
 DEFINES += ACF_TYPE=$$[ACF_TYPE]
+DEFINES += COPYRIGHT_YEAR=\\\"$$[CURRENT_YEAR]\\\"
 
 XRAAS_EMBED=$$[XRAAS_EMBED]
 contains(XRAAS_EMBED, yes) {

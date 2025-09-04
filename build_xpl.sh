@@ -116,6 +116,9 @@ mkdir -p output/64
 mkdir -p 64
 cd output
 
+YEAR=$(date +%Y)
+
+
 case "$(uname)" in
 Linux)
 	set -e
@@ -123,6 +126,7 @@ Linux)
 	qmake -set CROSS_COMPILE x86_64-w64-mingw32- && \
 		qmake -set XRAAS_EMBED $embed && \
 		qmake -set ACF_TYPE "$acf_type" && \
+		qmake -set CURRENT_YEAR "$YEAR" && \
 		qmake -set NOERRORS 1 && \
 		qmake -spec win32-g++ ../qmake.pro && \
 		make -j $NCPUS && \
@@ -137,6 +141,7 @@ Linux)
 	rm -f ../64/lin.xpl
 	qmake -set XRAAS_EMBED $embed && \
 	qmake -set ACF_TYPE "$acf_type" && \
+	qmake -set CURRENT_YEAR "$YEAR" && \
 	qmake -set NOERRORS 1 && \
 	qmake -spec linux-g++-64 ../qmake.pro && \
 	make -j $NCPUS && \
@@ -154,6 +159,7 @@ Darwin)
 	rm -f ../64/mac.xpl
 	qmake -set XRAAS_EMBED $embed && \
 	qmake -set ACF_TYPE "$acf_type" && \
+	qmake -set CURRENT_YEAR "$YEAR" && \
 	qmake -set NOERRORS 1 && \
 	qmake -spec macx-clang ../qmake.pro && \
 	make -j $NCPUS && \

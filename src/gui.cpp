@@ -76,7 +76,7 @@
 #define COPYRIGHT1     \
     XRAAS_MENU_NAME    \
     " " XRAAS2_VERSION \
-    "       © 2017-2025 S.Kiselkov, O.Butler. All rights reserved."
+    "       © 2017-" COPYRIGHT_YEAR " S.Kiselkov, O.Butler. All rights reserved."
 #define COPYRIGHT2                                     \
     "X-RAAS is open-source software. See COPYING for " \
     "more information."
