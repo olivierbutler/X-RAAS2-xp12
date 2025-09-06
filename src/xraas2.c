@@ -1588,7 +1588,7 @@ get_land_spd(bool_t *vref)
 	if (overrides[OVRD_VREF].value_i != 0) {
 		*vref = B_TRUE;
 		if (overrides[OVRD_VREF_ACT].value_i > MIN_APPCH_SPD)
-			return (overrides[OVRD_VREF].value_i);
+			return (overrides[OVRD_VREF_ACT].value_i);
 		else
 			return (NAN);
 	}
