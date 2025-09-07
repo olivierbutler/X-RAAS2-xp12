@@ -13,6 +13,8 @@
 \usepackage{fancyref}
 \usepackage{amssymb}
 \usepackage{supertabular}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
 
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -55,9 +57,20 @@
 
 \overfullrule=2cm
 
-\title{X-RAAS 2.0 User Manual}
+\newcommand{\myshorttitle}{X-RAAS 2.7}
+\newcommand{\builddate}{\today}
+
+\title{\myshorttitle User Manual}
 \author{Sašo Kiselkov}
 
+\pagestyle{fancy}
+% Clear the header and footer
+\fancyhead{}
+\fancyfoot{}
+% Set the right side of the footer to be the page number
+\fancyfoot[R]{\thepage/\pageref*{LastPage}}
+\fancyfoot[L]{\builddate}
+\fancyfoot[C]{\myshorttitle}
 
 \begin{document}
 
@@ -2017,7 +2030,7 @@ X-RAAS.
 ``\href{https://www.youtube.com/channel/UCg7RwFfTBq19oIxUkjuo_Ig}{hectopascal}''
 Reichel
 
-\item Olivier Butler [v2.3 build]
+\item Olivier Butler [v2.3+ builds]
 
 \end{itemize}
 
@@ -2025,6 +2038,8 @@ Reichel
 
 
 \begin{itemize}
+
+\item 2.7 Fix EASM (Excessive Approach Speed Monitor) calculation when override datarefs are used, update ND\_overlays.cfg file, adding : FF B777 V2
 
 \item 2.6 Revamped config window, update ND\_overlays.cfg file, adding : FF B757, Toliss A339
 
@@ -2038,7 +2053,7 @@ Reichel
 
 \item 2.1 Several fixes and add ND messages for several aircrafts
 
-\item 2.0 initial version
+\item 2.0 Initial version
 
 \end{itemize}
 
