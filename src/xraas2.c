@@ -2039,7 +2039,7 @@ guess_TATL_from_airport(int *TA, int *TL, bool_t *field_changed)
 
 	if (cur_arpt != NULL) {
 		const char *arpt_id = cur_arpt->icao;
-		dbg_log(altimeter, 2, "find_nearest_curarpt() = %s", arpt_id);
+		dbg_log(altimeter, 1, "find_nearest_curarpt() = %s", arpt_id);
 		*TA = cur_arpt->TA;
 		*TL = cur_arpt->TL;
 		state.TATL_field_elev = cur_arpt->refpt.elev;
@@ -2047,7 +2047,7 @@ guess_TATL_from_airport(int *TA, int *TL, bool_t *field_changed)
 			strlcpy(state.TATL_source, arpt_id,
 			    sizeof (state.TATL_source));
 			*field_changed = B_TRUE;
-			dbg_log(altimeter, 1, "TATL_source: %s "
+			dbg_log(altimeter, 1, "TATL_source1: %s "
 			    "TA: %d TL: %d field_elev: %d", arpt_id,
 			    *TA, *TL, state.TATL_field_elev);
 		}
@@ -2059,10 +2059,11 @@ guess_TATL_from_airport(int *TA, int *TL, bool_t *field_changed)
 		float outLat, outLon;
 		vect3_t pos_ecef = NULL_VECT3, arpt_ecef = NULL_VECT3;
 
-		dbg_log(altimeter, 2, "XPLMFindNavAid() = %d", arpt_ref);
+		dbg_log(altimeter, 1, "XPLMFindNavAid() = %d", arpt_ref);
 		if (arpt_ref != 0) {
 			XPLMGetNavAidInfo(arpt_ref, NULL, &outLat, &outLon,
 			    NULL, NULL, NULL, outID, NULL, NULL);
+				dbg_log(altimeter, 1, "XPLMGetNavAidInfo() = %s / Lat %d  Lon %d", outID, outLat,  outLon);
 			arpt_ecef = geo2ecef_ft(GEO_POS3(outLat, outLon, 0),
 			    &wgs84);
 			pos_ecef = geo2ecef_ft(GEO_POS3(adc->lat, adc->lon, 0),
@@ -2081,7 +2082,7 @@ guess_TATL_from_airport(int *TA, int *TL, bool_t *field_changed)
 				cur_arpt = matching_airport_in_tile_with_TATL(
 				    &state.airportdb, p, outID);
 			if (cur_arpt != NULL) {
-				dbg_log(altimeter, 2, "fallback airport = %s",
+				dbg_log(altimeter, 1, "fallback airport = %s",
 				    cur_arpt->icao);
 			}
 		}
@@ -2093,8 +2094,8 @@ guess_TATL_from_airport(int *TA, int *TL, bool_t *field_changed)
 			strlcpy(state.TATL_source, cur_arpt->icao,
 			    sizeof (state.TATL_source));
 			*field_changed = B_TRUE;
-			dbg_log(altimeter, 1, "TATL_source: %s "
-			    "TA: %d TA: %d field_elev: %d", cur_arpt->icao,
+			dbg_log(altimeter, 1, "TATL_source2: %s "
+			    "TA: %d TL: %d field_elev: %d", cur_arpt->icao,
 			    *TA, *TL, state.TATL_field_elev);
 		}
 	}
@@ -2208,7 +2209,7 @@ altimeter_setting(void)
 				d_qfe = fabs(adc->baro_alt -
 				    (elev - state.TATL_field_elev));
 			dbg_log(altimeter, 1, "alt check; d_qnh: %.1f "
-			    " d_qfe: %.1f", d_qnh, d_qfe);
+			    " d_qfe: %.1f baro_alt: %.1f elev: %d TATL_field_elev: %d", d_qnh, d_qfe, adc->baro_alt, elev, state.TATL_field_elev);
 			if (/* The set baro is out of bounds for QNH, OR */
 			    d_qnh > ALTIMETER_SETTING_QNH_ERR_LIMIT ||
 			    /* Set baro is out of bounds for QFE */
