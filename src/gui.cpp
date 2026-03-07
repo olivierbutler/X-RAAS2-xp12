@@ -360,7 +360,7 @@ bool_t SettingsWindow::comboList(comboList_t *list)
     comboList_t_ combo_previous = list->combo_list[list->selected];
     if (combo_previous.use_chinese)
     {
-        ImGui::PushFont(ImgWindow::fontChinese.get());
+        ImGui::PushFont(ImgWindow::fontChinese);
     }
 
     bool_t lang_combo = ImGui::BeginCombo(list->name, combo_previous.string, 0);
@@ -375,7 +375,7 @@ bool_t SettingsWindow::comboList(comboList_t *list)
             int is_selected = (i == list->selected);
             if (list->combo_list[i].use_chinese)
             {
-                ImGui::PushFont(ImgWindow::fontChinese.get());
+                ImGui::PushFont(ImgWindow::fontChinese);
             }
             if (ImGui::Selectable(list->combo_list[i].string, is_selected))
             {
